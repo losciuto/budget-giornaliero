@@ -1,12 +1,21 @@
 # Budget Giornaliero
 
-Un'applicazione cross-platform (Linux, Windows, Android) per calcolare il budget giornaliero disponibile fino al 27 del mese corrente.
+Un'applicazione cross-platform (Linux, Windows, Android) per calcolare il budget giornaliero disponibile fino a una data specifica del mese corrente.
+
+**Versione:** 1.0.0
 
 ## Funzionalità
-*   **Calcolo Automatico**: Conta i giorni mancanti al 27 del mese (incluso).
+*   **Calcolo Automatico**: Conta i giorni mancanti alla data obiettivo (incluso).
+*   **Data Configurabile**: Puoi cambiare il giorno obiettivo (default: 27 del mese) e il calcolo si aggiorna in tempo reale.
 *   **Divisione Budget**: Divide l'importo inserito per i giorni rimanenti.
 *   **Interfaccia Moderna**: Tema scuro (Dark Mode) realizzato con KivyMD.
+*   **Info e Crediti**: Finestra dedicata con i dettagli del progetto.
 *   **Cross-Platform**: Unico codice sorgente per tutte le piattaforme.
+
+## Crediti
+*   **Autore**: Massimo Lo Sciuto
+*   **Supporto**: Antigravity
+*   **Sviluppo**: Gemini 3 Pro
 
 ## Struttura del Progetto
 Il codice sorgente si trova nella cartella `native_app/`.

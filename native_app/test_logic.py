@@ -2,11 +2,14 @@ import unittest
 from datetime import datetime
 
 class TestBudgetLogic(unittest.TestCase):
-    def calculate_days(self, current_date):
+    def calculate_days(self, current_date, target_day=27):
         # Logic extracted from main.py
-        target_date = current_date.replace(day=27)
-        
-        if current_date.day > 27:
+        try:
+            target_date = current_date.replace(day=target_day)
+        except ValueError:
+            return 0 # Invalid date
+            
+        if current_date.day > target_day:
             return 0
         else:
             return (target_date - current_date).days + 1
@@ -16,27 +19,31 @@ class TestBudgetLogic(unittest.TestCase):
             return amount / days
         return 0
 
-    def test_days_before_27(self):
-        # Example: 20th of the month
+    def test_days_before_target(self):
+        # Example: 20th of the month, target 27
         today = datetime(2025, 11, 20)
-        days = self.calculate_days(today)
-        # 20, 21, 22, 23, 24, 25, 26, 27 = 8 days
-        # Formula: (27 - 20) + 1 = 8
+        days = self.calculate_days(today, target_day=27)
+        # 20 to 27 = 8 days
         self.assertEqual(days, 8)
 
-    def test_days_is_27(self):
-        # Example: 27th of the month
+    def test_days_is_target(self):
+        # Example: 27th of the month, target 27
         today = datetime(2025, 11, 27)
-        days = self.calculate_days(today)
-        # 27 = 1 day
-        # Formula: (27 - 27) + 1 = 1
+        days = self.calculate_days(today, target_day=27)
         self.assertEqual(days, 1)
 
-    def test_days_after_27(self):
-        # Example: 28th of the month
+    def test_days_after_target(self):
+        # Example: 28th of the month, target 27
         today = datetime(2025, 11, 28)
-        days = self.calculate_days(today)
+        days = self.calculate_days(today, target_day=27)
         self.assertEqual(days, 0)
+        
+    def test_custom_target_day(self):
+        # Example: 10th of the month, target 15
+        today = datetime(2025, 11, 10)
+        days = self.calculate_days(today, target_day=15)
+        # 10, 11, 12, 13, 14, 15 = 6 days
+        self.assertEqual(days, 6)
 
     def test_budget_calculation(self):
         amount = 100.0
