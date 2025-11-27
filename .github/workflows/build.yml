@@ -15,7 +15,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build with Buildozer
-        uses: ArtemSBulgakov/buildozer-action-v2@v1
+        uses: ArtemSBulgakov/buildozer-action@v1
         with:
           workdir: native_app
           buildozer_version: master
