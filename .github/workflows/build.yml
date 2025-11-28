@@ -14,12 +14,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Prepare buildozer
+        run: |
+          cp native_app/buildozer.spec .
+          cp native_app/main.py .
+          cp native_app/requirements.txt .
+
       - name: Build with Buildozer
         uses: digreatbrian/buildozer-action@v1
-        working-directory: native_app
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: budget-calculator-apk
-          path: native_app/bin/*.apk
+          path: bin/*.apk
