@@ -77,10 +77,28 @@ Per creare un file `.exe` funzionante, è necessario eseguire questi passaggi **
 
 ### 🤖 Android
 
-La compilazione per Android è gestita automaticamente tramite **GitHub Actions** (per evitare problemi con Buildozer su alcune distro Linux).
+Per compilare l'APK Android, è necessario usare **Buildozer** su un sistema **Linux** (o WSL su Windows).
 
-1.  Carica questo progetto su una repository **GitHub**.
-2.  Vai nella scheda **Actions** della repository.
-3.  Vedrai un workflow chiamato "Build Android APK" avviarsi automaticamente.
-4.  Al termine, scarica il file `.apk` dalla sezione "Artifacts" del workflow completato.
-5.  Installa l'APK sul tuo smartphone.
+1.  **Installa le dipendenze di sistema** (Ubuntu/Debian):
+    ```bash
+    sudo apt update
+    sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
+    ```
+
+2.  **Installa Buildozer**:
+    ```bash
+    pip3 install --user buildozer
+    ```
+
+3.  **Compila l'APK**:
+    ```bash
+    cd native_app
+    buildozer android debug
+    ```
+
+4.  L'APK sarà generato in `native_app/bin/budgetgiornaliero-1.0-debug.apk`.
+
+5.  Trasferisci l'APK sul tuo smartphone Android e installalo.
+
+> **Nota**: La prima compilazione richiederà molto tempo (30-60 minuti) perché Buildozer scaricherà Android SDK, NDK e altre dipendenze.
+
