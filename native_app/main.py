@@ -4,8 +4,9 @@ from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.card import MDCard
 from kivymd.uix.label import MDLabel
 from kivymd.uix.textfield import MDTextField
-from kivymd.uix.button import MDRaisedButton, MDIconButton
+from kivymd.uix.button import MDRaisedButton, MDIconButton, MDFillRoundFlatIconButton
 from kivymd.uix.dialog import MDDialog
+from kivymd.uix.pickers import MDDatePicker
 from kivy.metrics import dp
 from kivy.clock import Clock
 from datetime import datetime
@@ -13,6 +14,7 @@ import math
 
 class BudgetCalculatorApp(MDApp):
     dialog = None
+    target_date = None
 
     def build(self):
         self.theme_cls.theme_style = "Dark"
@@ -77,18 +79,31 @@ class BudgetCalculatorApp(MDApp):
             elevation=4
         )
         
-        # Target Day Input
-        self.target_day_input = MDTextField(
-            text="27",
-            hint_text="Giorno Obiettivo",
-            helper_text="Giorno del mese in cui termina il budget",
-            helper_text_mode="on_focus",
-            input_filter="int",
-            font_size=dp(18),
-            mode="rectangle"
-        )
-        self.target_day_input.bind(text=self.update_calculation)
+        # Date Selection
+        date_layout = MDBoxLayout(orientation='vertical', spacing=dp(5), size_hint_y=None, height=dp(80))
+        date_label = MDLabel(text="Data Fine Budget", theme_text_color="Secondary", font_style="Caption")
+        
+        # Initialize default target date (27th of current or next month)
+        now = datetime.now()
+        if now.day > 27:
+             # Next month
+            if now.month == 12:
+                self.target_date = now.replace(year=now.year + 1, month=1, day=27)
+            else:
+                self.target_date = now.replace(month=now.month + 1, day=27)
+        else:
+            self.target_date = now.replace(day=27)
 
+        self.date_btn = MDFillRoundFlatIconButton(
+            text=self.target_date.strftime("%d/%m/%Y"),
+            icon="calendar",
+            pos_hint={'center_x': 0.5},
+            size_hint_x=1,
+            on_release=self.show_date_picker
+        )
+        date_layout.add_widget(date_label)
+        date_layout.add_widget(self.date_btn)
+        
         # Input Field
         self.amount_input = MDTextField(
             hint_text="Importo Disponibile (€)",
@@ -105,9 +120,9 @@ class BudgetCalculatorApp(MDApp):
         
         # Date Box
         date_box = MDBoxLayout(orientation='vertical', size_hint_x=0.5)
-        date_label = MDLabel(text="Data di Oggi", theme_text_color="Secondary", font_style="Caption", halign="center")
+        date_label_box = MDLabel(text="Data di Oggi", theme_text_color="Secondary", font_style="Caption", halign="center")
         self.date_value = MDLabel(text="--/--/----", font_style="H6", halign="center")
-        date_box.add_widget(date_label)
+        date_box.add_widget(date_label_box)
         date_box.add_widget(self.date_value)
         
         # Days Box
@@ -134,7 +149,7 @@ class BudgetCalculatorApp(MDApp):
         result_box.add_widget(self.result_value)
         
         # Add widgets to card
-        card.add_widget(self.target_day_input)
+        card.add_widget(date_layout)
         card.add_widget(self.amount_input)
         card.add_widget(info_layout)
         card.add_widget(result_box)
@@ -151,11 +166,25 @@ class BudgetCalculatorApp(MDApp):
         
         return screen
 
+    def show_date_picker(self, instance):
+        date_dialog = MDDatePicker(
+            year=self.target_date.year,
+            month=self.target_date.month,
+            day=self.target_date.day
+        )
+        date_dialog.bind(on_save=self.on_date_save)
+        date_dialog.open()
+
+    def on_date_save(self, instance, value, date_range):
+        self.target_date = datetime(value.year, value.month, value.day)
+        self.date_btn.text = self.target_date.strftime("%d/%m/%Y")
+        self.update_calculation()
+
     def show_info_dialog(self, instance):
         if not self.dialog:
             self.dialog = MDDialog(
                 title="Informazioni",
-                text="Autore: Massimo Lo Sciuto\nSupporto: Antigravity\nSviluppo: Gemini 3 Pro\nVersione: 1.0.0",
+                text="Autore: Massimo Lo Sciuto\nSupporto: Antigravity\nSviluppo: Gemini 3 Pro\nVersione: 1.1.1",
                 buttons=[
                     MDRaisedButton(
                         text="CHIUDI",
@@ -170,30 +199,16 @@ class BudgetCalculatorApp(MDApp):
         now = datetime.now()
         self.date_value.text = now.strftime("%d/%m/%Y")
         
-        # Get target day
-        try:
-            target_day = int(self.target_day_input.text)
-        except ValueError:
-            target_day = 27 # Default fallback
-        
         # Calculate days
         today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+        target = self.target_date.replace(hour=0, minute=0, second=0, microsecond=0)
         
-        # Logic: if today > target_day, period ended
-        if today.day > target_day:
-            self.days_remaining = 0
-            self.days_value.text = "Terminato"
+        if target < today:
+             self.days_remaining = 0
+             self.days_value.text = "Scaduto"
         else:
-            # Inclusive calculation
-            # We need to construct the target date for the current month
-            try:
-                target_date = today.replace(day=target_day)
-                self.days_remaining = (target_date - today).days + 1
-                self.days_value.text = str(self.days_remaining)
-            except ValueError:
-                # Handle invalid days (e.g. 31st in February)
-                self.days_remaining = 0
-                self.days_value.text = "Data Errata"
+             self.days_remaining = (target - today).days + 1
+             self.days_value.text = str(self.days_remaining)
 
         # Calculate Budget
         try:

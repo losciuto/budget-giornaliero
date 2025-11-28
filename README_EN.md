@@ -2,11 +2,11 @@
 
 A cross-platform application (Linux, Windows, Android) to calculate the daily budget available until a specific date of the current month.
 
-**Version:** 1.0.0
+**Version:** 1.1.1
 
 ## Features
 *   **Automatic Calculation**: Counts the days remaining until the target date (inclusive).
-*   **Configurable Date**: You can change the target day (default: 27th of the month) and the calculation updates in real-time.
+*   **Configurable Date**: Select the budget end date via a convenient calendar (DatePicker).
 *   **Budget Division**: Divides the entered amount by the remaining days.
 *   **Modern Interface**: Dark Mode theme built with KivyMD.
 *   **Info & Credits**: Dedicated window with project details.
