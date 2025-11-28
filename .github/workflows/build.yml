@@ -14,13 +14,50 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Build with Buildozer
-        uses: ArtemSBulgakov/buildozer-action@v1
-        env:
-          USER: root
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
         with:
-          workdir: native_app
-          buildozer_version: master
+          python-version: '3.11'
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential \
+            git \
+            ffmpeg \
+            libsdl2-dev \
+            libsdl2-image-dev \
+            libsdl2-mixer-dev \
+            libsdl2-ttf-dev \
+            libportmidi-dev \
+            libswscale-dev \
+            libavformat-dev \
+            libavcodec-dev \
+            zlib1g-dev \
+            libgstreamer1.0-dev \
+            gstreamer1.0-plugins-base \
+            gstreamer1.0-plugins-good \
+            openjdk-17-jdk \
+            unzip \
+            zip \
+            autoconf \
+            libtool \
+            pkg-config \
+            cmake \
+            ninja-build \
+            ccache
+
+      - name: Install Cython and buildozer
+        run: |
+          python -m pip install --upgrade pip
+          pip install cython==0.29.36
+          pip install buildozer
+
+      - name: Build APK with Buildozer
+        working-directory: native_app
+        run: |
+          buildozer android debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
