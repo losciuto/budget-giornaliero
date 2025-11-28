@@ -16,6 +16,8 @@ jobs:
 
       - name: Build with Buildozer
         uses: ArtemSBulgakov/buildozer-action@v1
+        env:
+          USER: root
         with:
           workdir: native_app
           buildozer_version: master
