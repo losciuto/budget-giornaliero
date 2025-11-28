@@ -16,8 +16,7 @@ jobs:
 
       - name: Build with Buildozer
         uses: digreatbrian/buildozer-action@v1
-        with:
-          workdir: native_app
+        working-directory: native_app
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
