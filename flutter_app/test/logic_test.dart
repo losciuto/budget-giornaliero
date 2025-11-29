@@ -23,9 +23,18 @@ void main() {
       expect(days, 30);
     });
 
+    test('calculateTotalExpenses', () {
+      final expenses = [
+        Expense(amount: 10.0, description: 'A', date: DateTime.now()),
+        Expense(amount: 20.0, description: 'B', date: DateTime.now()),
+      ];
+      expect(BudgetLogic.calculateTotalExpenses(expenses), 30.0);
+    });
+
     test('calculateDailyBudget', () {
-      expect(BudgetLogic.calculateDailyBudget(100.0, 4), 25.0);
-      expect(BudgetLogic.calculateDailyBudget(100.0, 0), 0.0);
+      expect(BudgetLogic.calculateDailyBudget(100.0, 20.0, 4), 20.0);
+      expect(BudgetLogic.calculateDailyBudget(100.0, 0.0, 4), 25.0);
+      expect(BudgetLogic.calculateDailyBudget(100.0, 0.0, 0), 0.0);
     });
   });
 }
