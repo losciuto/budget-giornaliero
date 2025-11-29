@@ -6,3 +6,12 @@ dist/
 bin/
 *.spec
 !native_app/buildozer.spec
+
+# Flutter SDK
+flutter_sdk/
+
+# IDEs and Editors
+.idea/
+*.iml
+.vscode/
+.DS_Store
