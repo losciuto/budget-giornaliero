@@ -15,6 +15,7 @@ Questa è la versione moderna dell'applicazione Budget Giornaliero, riscritta in
 ### Prerequisiti
 *   [Flutter SDK](https://flutter.dev/docs/get-started/install) installato e configurato nel PATH.
 *   Un editor di codice (VS Code o Android Studio) con i plugin Flutter/Dart installati.
+*   **Android Build**: Richiede NDK versione 27.0.12077973 o superiore e supporto Java 8 core library desugaring (già configurato in `build.gradle`).
 
 ### Esecuzione
 1.  Ottieni le dipendenze:

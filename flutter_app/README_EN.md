@@ -15,6 +15,7 @@ This is the modern version of the Daily Budget application, entirely rewritten i
 ### Prerequisites
 *   [Flutter SDK](https://flutter.dev/docs/get-started/install) installed and configured in PATH.
 *   A code editor (VS Code or Android Studio) with Flutter/Dart plugins installed.
+*   **Android Build**: Requires NDK version 27.0.12077973 or higher and Java 8 core library desugaring support (already configured in `build.gradle`).
 
 ### Running
 1.  Get dependencies:

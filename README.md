@@ -2,7 +2,7 @@
 
 Un'applicazione cross-platform (Android, Linux, Windows) per calcolare il budget giornaliero disponibile fino a una data specifica del mese corrente.
 
-**Versione Corrente:** 2.0.0 (Flutter)
+**Versione Corrente:** 2.1.0 (Flutter)
 
 ## 🚀 Nuova Versione Flutter
 
@@ -12,6 +12,9 @@ Il codice sorgente si trova nella cartella `flutter_app/`.
 ### Funzionalità Principali
 *   **Calcolo Automatico**: Giorni mancanti e budget giornaliero.
 *   **Data Configurabile**: Selettore data intuitivo.
+*   **Gestione Spese**: Aggiunta spese con swipe-to-delete.
+*   **Notifiche**: Promemoria giornaliero del budget residuo.
+*   **Export Excel**: Esportazione report spese in formato .xlsx.
 *   **Design Moderno**: Material Design 3 con supporto tema scuro/chiaro.
 *   **Cross-Platform**: Supporto nativo per Android e Linux Desktop.
 
