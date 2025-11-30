@@ -15,6 +15,7 @@ The source code is located in the `flutter_app/` folder.
 *   **Expense Management**: Add expenses with swipe-to-delete.
 *   **Notifications**: Daily reminder of remaining budget.
 *   **Excel Export**: Export expense report to .xlsx format.
+*   **Internationalization**: Italian/English support with automatic currency based on locale.
 *   **Modern Design**: Material Design 3 with dark/light theme support.
 *   **Cross-Platform**: Native support for Android and Linux Desktop.
 

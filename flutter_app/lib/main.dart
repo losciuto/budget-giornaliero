@@ -25,7 +25,7 @@ class AppStrings {
       'title': 'Budget Giornaliero',
       'subtitle': 'Gestione spese mensili',
       'target_date': 'Data Fine Budget',
-      'total_budget': 'Importo Disponibile (€)',
+      'total_budget': 'Importo Disponibile',
       'hint_budget': 'Inserisci il tuo budget totale',
       'today': 'Data di Oggi',
       'days_remaining': 'Giorni Mancanti',
@@ -42,7 +42,7 @@ class AppStrings {
       'cancel': 'Annulla',
       'add': 'Aggiungi',
       'notification_title': 'Budget Giornaliero',
-      'notification_body': 'Hai ancora €{amount} disponibili per oggi!',
+      'notification_body': 'Hai ancora {amount} disponibili per oggi!',
       'settings': 'Impostazioni',
       'enable_notifications': 'Abilita Notifiche Giornaliere',
       'export_excel': 'Esporta in Excel',
@@ -54,7 +54,7 @@ class AppStrings {
       'title': 'Daily Budget',
       'subtitle': 'Monthly expense management',
       'target_date': 'Budget End Date',
-      'total_budget': 'Available Amount (€)',
+      'total_budget': 'Available Amount',
       'hint_budget': 'Enter your total budget',
       'today': 'Today\'s Date',
       'days_remaining': 'Days Remaining',
@@ -71,7 +71,7 @@ class AppStrings {
       'cancel': 'Cancel',
       'add': 'Add',
       'notification_title': 'Daily Budget',
-      'notification_body': 'You still have €{amount} available for today!',
+      'notification_body': 'You still have {amount} available for today!',
       'settings': 'Settings',
       'enable_notifications': 'Enable Daily Notifications',
       'export_excel': 'Export to Excel',
@@ -132,13 +132,14 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
   final FlutterLocalNotificationsPlugin _notificationsPlugin = FlutterLocalNotificationsPlugin();
   
   String _daysRemaining = "--";
-  String _dailyBudget = "€ 0.00";
+  double _dailyBudget = 0.0;
   double _calculatedDaily = 0.0;
   double _totalSpent = 0.0;
   List<Expense> _expenses = [];
   bool _notificationsEnabled = false;
 
-  final DateFormat _dateFormat = DateFormat('dd/MM/yyyy');
+  late final DateFormat _dateFormat;
+  late final NumberFormat _currencyFormat;
 
   @override
   void initState() {
@@ -146,6 +147,14 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
     _targetDate = BudgetLogic.getInitialTargetDate(DateTime.now());
     _initNotifications();
     _loadData();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final locale = Localizations.localeOf(context);
+    _dateFormat = DateFormat('dd/MM/yyyy', locale.toString());
+    _currencyFormat = NumberFormat.currency(locale: locale.toString());
   }
 
   Future<void> _initNotifications() async {
@@ -171,7 +180,7 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
     await _notificationsPlugin.zonedSchedule(
       0,
       AppStrings.get(context, 'notification_title'),
-      AppStrings.get(context, 'notification_body').replaceAll('{amount}', _calculatedDaily.toStringAsFixed(2)),
+      AppStrings.get(context, 'notification_body').replaceAll('{amount}', _currencyFormat.format(_calculatedDaily)),
       _nextInstanceOf9AM(),
       const NotificationDetails(
         android: AndroidNotificationDetails(
@@ -254,7 +263,7 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
       _totalSpent = BudgetLogic.calculateTotalExpenses(_expenses);
       _calculatedDaily = BudgetLogic.calculateDailyBudget(amount, _totalSpent, diff);
       
-      _dailyBudget = "€ ${_calculatedDaily.toStringAsFixed(2)}";
+      _dailyBudget = _calculatedDaily;
     });
     _saveData();
   }
@@ -642,7 +651,7 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(AppStrings.get(context, 'spent'), style: const TextStyle(color: Colors.redAccent)),
-                          Text("€ ${_totalSpent.toStringAsFixed(2)}", style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.redAccent)),
+                          Text(_currencyFormat.format(_totalSpent), style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.redAccent)),
                         ],
                       ),
                       const SizedBox(height: 8),
@@ -650,7 +659,7 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(AppStrings.get(context, 'remaining'), style: const TextStyle(color: Colors.greenAccent)),
-                          Text("€ ${((double.tryParse(_amountController.text.replaceAll(',', '.')) ?? 0.0) - _totalSpent).toStringAsFixed(2)}", style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.greenAccent)),
+                          Text(_currencyFormat.format((double.tryParse(_amountController.text.replaceAll(',', '.')) ?? 0.0) - _totalSpent), style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.greenAccent)),
                         ],
                       ),
                       const Divider(),
@@ -659,7 +668,7 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
                       Text(AppStrings.get(context, 'daily_available'), style: const TextStyle(color: Colors.grey)),
                       const SizedBox(height: 5),
                       Text(
-                        _dailyBudget,
+                        _currencyFormat.format(_dailyBudget),
                         style: TextStyle(
                           fontSize: 36,
                           fontWeight: FontWeight.bold,
@@ -737,7 +746,7 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
                                   children: [
                                     Text(_dateFormat.format(expense.date)),
                                     Text(
-                                      'Rimanente: € ${remainingAfterExpense.toStringAsFixed(2)}',
+                                      'Rimanente: ${_currencyFormat.format(remainingAfterExpense)}',
                                       style: TextStyle(
                                         fontSize: 12,
                                         color: remainingAfterExpense < 0 ? Colors.red : Colors.greenAccent,
@@ -747,7 +756,7 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
                                   ],
                                 ),
                                 trailing: Text(
-                                  "- € ${expense.amount.toStringAsFixed(2)}",
+                                  "- ${_currencyFormat.format(expense.amount)}",
                                   style: const TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold),
                                 ),
                               ),
