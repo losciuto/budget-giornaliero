@@ -15,7 +15,8 @@ Il codice sorgente si trova nella cartella `flutter_app/`.
 *   **Gestione Spese**: Aggiunta spese con swipe-to-delete.
 *   **Notifiche**: Promemoria giornaliero del budget residuo.
 *   **Export Excel**: Esportazione report spese in formato .xlsx.
-*   **Internazionalizzazione**: Supporto italiano/inglese con valuta automatica basata sulla locale.
+*   **Internazionalizzazione**: Supporto italiano/inglese.
+*   **Valute Personalizzabili**: Supporto per oltre 20 valute (EUR, USD, GBP, ecc.) selezionabili dalle impostazioni.
 *   **Design Moderno**: Material Design 3 con supporto tema scuro/chiaro.
 *   **Cross-Platform**: Supporto nativo per Android e Linux Desktop.
 

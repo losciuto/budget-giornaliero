@@ -81,8 +81,8 @@ class AppStrings {
     },
   };
 
-  static String get(BuildContext context, String key) {
-    final locale = Localizations.localeOf(context).languageCode;
+  static String get(BuildContext context, String key, {String? languageCode}) {
+    final locale = languageCode ?? Localizations.localeOf(context).languageCode;
     return _localizedValues[locale]?[key] ?? _localizedValues['it']![key]!;
   }
 }
@@ -137,6 +137,10 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
   double _totalSpent = 0.0;
   List<Expense> _expenses = [];
   bool _notificationsEnabled = false;
+  
+  // Language and Currency settings
+  String _selectedLanguage = 'it';
+  String _selectedCurrency = 'EUR';
 
   late final DateFormat _dateFormat;
   late final NumberFormat _currencyFormat;
@@ -152,9 +156,42 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final locale = Localizations.localeOf(context);
-    _dateFormat = DateFormat('dd/MM/yyyy', locale.toString());
-    _currencyFormat = NumberFormat.currency(locale: locale.toString());
+    _updateFormatters();
+  }
+  
+  void _updateFormatters() {
+    _dateFormat = DateFormat('dd/MM/yyyy', _selectedLanguage);
+    _currencyFormat = NumberFormat.currency(
+      locale: _selectedLanguage,
+      symbol: _getCurrencySymbol(_selectedCurrency),
+      decimalDigits: 2,
+    );
+  }
+  
+  String _getCurrencySymbol(String code) {
+    const currencySymbols = {
+      'EUR': '€',
+      'USD': '\$',
+      'GBP': '£',
+      'JPY': '¥',
+      'CHF': 'CHF',
+      'CAD': 'C\$',
+      'AUD': 'A\$',
+      'CNY': '¥',
+      'INR': '₹',
+      'BRL': 'R\$',
+      'RUB': '₽',
+      'KRW': '₩',
+      'MXN': 'MX\$',
+      'ZAR': 'R',
+      'SEK': 'kr',
+      'NOK': 'kr',
+      'DKK': 'kr',
+      'PLN': 'zł',
+      'TRY': '₺',
+      'AED': 'د.إ',
+    };
+    return currencySymbols[code] ?? code;
   }
 
   Future<void> _initNotifications() async {
@@ -179,8 +216,8 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
 
     await _notificationsPlugin.zonedSchedule(
       0,
-      AppStrings.get(context, 'notification_title'),
-      AppStrings.get(context, 'notification_body').replaceAll('{amount}', _currencyFormat.format(_calculatedDaily)),
+      AppStrings.get(context, 'notification_title', languageCode: _selectedLanguage),
+      AppStrings.get(context, 'notification_body', languageCode: _selectedLanguage).replaceAll('{amount}', _currencyFormat.format(_calculatedDaily)),
       _nextInstanceOf9AM(),
       const NotificationDetails(
         android: AndroidNotificationDetails(
@@ -229,7 +266,12 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
 
       // Load Notifications
       _notificationsEnabled = prefs.getBool('notifications_enabled') ?? false;
+
+      // Load Language and Currency
+      _selectedLanguage = prefs.getString('language') ?? 'it';
+      _selectedCurrency = prefs.getString('currency') ?? 'EUR';
     });
+    _updateFormatters();
     _updateCalculations();
   }
 
@@ -239,6 +281,8 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
     await prefs.setString('amount', _amountController.text);
     await prefs.setStringList('expenses', _expenses.map((e) => jsonEncode(e.toJson())).toList());
     await prefs.setBool('notifications_enabled', _notificationsEnabled);
+    await prefs.setString('language', _selectedLanguage);
+    await prefs.setString('currency', _selectedCurrency);
     _scheduleNotification();
   }
 
@@ -253,7 +297,7 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
       int diff = targetMidnight.difference(todayMidnight).inDays + 1;
       
       if (targetMidnight.isBefore(todayMidnight)) {
-        _daysRemaining = AppStrings.get(context, 'expired');
+        _daysRemaining = AppStrings.get(context, 'expired', languageCode: _selectedLanguage);
         diff = 0;
       } else {
         _daysRemaining = diff.toString();
@@ -290,18 +334,18 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(AppStrings.get(context, 'add_expense')),
+        title: Text(AppStrings.get(context, 'add_expense', languageCode: _selectedLanguage)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
               controller: descController,
-              decoration: InputDecoration(labelText: AppStrings.get(context, 'description')),
+              decoration: InputDecoration(labelText: AppStrings.get(context, 'description', languageCode: _selectedLanguage)),
               textCapitalization: TextCapitalization.sentences,
             ),
             TextField(
               controller: amountController,
-              decoration: InputDecoration(labelText: AppStrings.get(context, 'amount')),
+              decoration: InputDecoration(labelText: AppStrings.get(context, 'amount', languageCode: _selectedLanguage)),
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
             ),
           ],
@@ -309,7 +353,7 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(AppStrings.get(context, 'cancel')),
+            child: Text(AppStrings.get(context, 'cancel', languageCode: _selectedLanguage)),
           ),
           ElevatedButton(
             onPressed: () {
@@ -326,7 +370,7 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
                 Navigator.pop(context);
               }
             },
-            child: Text(AppStrings.get(context, 'add')),
+            child: Text(AppStrings.get(context, 'add', languageCode: _selectedLanguage)),
           ),
         ],
       ),
@@ -453,7 +497,7 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('${AppStrings.get(context, 'export_success')}\n$filePath'),
+              content: Text('${AppStrings.get(context, 'export_success', languageCode: _selectedLanguage)}\n$filePath'),
               duration: const Duration(seconds: 5),
             ),
           );
@@ -463,7 +507,7 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('${AppStrings.get(context, 'export_error')}: $e'),
+            content: Text('${AppStrings.get(context, 'export_error', languageCode: _selectedLanguage)}: $e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -478,13 +522,66 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              title: Text(AppStrings.get(context, 'settings')),
+              title: Text(AppStrings.get(context, 'settings', languageCode: _selectedLanguage)),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Language Selection
+                  ListTile(
+                    title: const Text("Lingua / Language"),
+                    trailing: DropdownButton<String>(
+                      value: _selectedLanguage,
+                      onChanged: (String? newValue) {
+                        if (newValue != null) {
+                          setState(() {
+                            _selectedLanguage = newValue;
+                          });
+                          this.setState(() {
+                            _selectedLanguage = newValue;
+                            _updateFormatters();
+                          });
+                          _saveData();
+                        }
+                      },
+                      items: const [
+                        DropdownMenuItem(value: 'it', child: Text('Italiano')),
+                        DropdownMenuItem(value: 'en', child: Text('English')),
+                      ],
+                    ),
+                  ),
+                  
+                  // Currency Selection
+                  ListTile(
+                    title: const Text("Valuta / Currency"),
+                    trailing: DropdownButton<String>(
+                      value: _selectedCurrency,
+                      onChanged: (String? newValue) {
+                        if (newValue != null) {
+                          setState(() {
+                            _selectedCurrency = newValue;
+                          });
+                          this.setState(() {
+                            _selectedCurrency = newValue;
+                            _updateFormatters();
+                          });
+                          _saveData();
+                        }
+                      },
+                      items: ['EUR', 'USD', 'GBP', 'JPY', 'CHF', 'CAD', 'AUD', 'CNY', 'INR', 'BRL', 'RUB', 'KRW', 'MXN', 'ZAR', 'SEK', 'NOK', 'DKK', 'PLN', 'TRY', 'AED']
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                  
+                  const Divider(),
+
                   SwitchListTile(
-                    title: Text(AppStrings.get(context, 'enable_notifications')),
+                    title: Text(AppStrings.get(context, 'enable_notifications', languageCode: _selectedLanguage)),
                     value: _notificationsEnabled,
                     onChanged: (bool value) {
                       setState(() {
@@ -545,7 +642,7 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          AppStrings.get(context, 'title'),
+                          AppStrings.get(context, 'title', languageCode: _selectedLanguage),
                           style: const TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
@@ -553,7 +650,7 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
                           ),
                         ),
                         Text(
-                          AppStrings.get(context, 'subtitle'),
+                          AppStrings.get(context, 'subtitle', languageCode: _selectedLanguage),
                           style: const TextStyle(color: Colors.grey),
                         ),
                       ],
@@ -562,7 +659,7 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
                   IconButton(
                     icon: const Icon(Icons.file_download, color: Colors.green),
                     onPressed: _exportToExcel,
-                    tooltip: AppStrings.get(context, 'export_excel'),
+                    tooltip: AppStrings.get(context, 'export_excel', languageCode: _selectedLanguage),
                   ),
                   IconButton(
                     icon: const Icon(Icons.settings, color: Colors.blue),
@@ -587,7 +684,7 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(AppStrings.get(context, 'target_date'), style: const TextStyle(color: Colors.grey)),
+                                Text(AppStrings.get(context, 'target_date', languageCode: _selectedLanguage), style: const TextStyle(color: Colors.grey)),
                                 const SizedBox(height: 5),
                                 InkWell(
                                   onTap: () => _selectDate(context),
@@ -609,7 +706,7 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
-                                Text(AppStrings.get(context, 'days_remaining'), style: const TextStyle(color: Colors.grey)),
+                                Text(AppStrings.get(context, 'days_remaining', languageCode: _selectedLanguage), style: const TextStyle(color: Colors.grey)),
                                 const SizedBox(height: 5),
                                 Text(
                                   _daysRemaining,
@@ -636,8 +733,8 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
                         controller: _amountController,
                         keyboardType: const TextInputType.numberWithOptions(decimal: true),
                         decoration: InputDecoration(
-                          labelText: AppStrings.get(context, 'total_budget'),
-                          hintText: AppStrings.get(context, 'hint_budget'),
+                          labelText: AppStrings.get(context, 'total_budget', languageCode: _selectedLanguage),
+                          hintText: AppStrings.get(context, 'hint_budget', languageCode: _selectedLanguage),
                           border: const OutlineInputBorder(),
                           prefixIcon: const Icon(Icons.euro),
                         ),
@@ -650,7 +747,7 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(AppStrings.get(context, 'spent'), style: const TextStyle(color: Colors.redAccent)),
+                          Text(AppStrings.get(context, 'spent', languageCode: _selectedLanguage), style: const TextStyle(color: Colors.redAccent)),
                           Text(_currencyFormat.format(_totalSpent), style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.redAccent)),
                         ],
                       ),
@@ -658,14 +755,14 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(AppStrings.get(context, 'remaining'), style: const TextStyle(color: Colors.greenAccent)),
+                          Text(AppStrings.get(context, 'remaining', languageCode: _selectedLanguage), style: const TextStyle(color: Colors.greenAccent)),
                           Text(_currencyFormat.format((double.tryParse(_amountController.text.replaceAll(',', '.')) ?? 0.0) - _totalSpent), style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.greenAccent)),
                         ],
                       ),
                       const Divider(),
                       
                       // Result
-                      Text(AppStrings.get(context, 'daily_available'), style: const TextStyle(color: Colors.grey)),
+                      Text(AppStrings.get(context, 'daily_available', languageCode: _selectedLanguage), style: const TextStyle(color: Colors.grey)),
                       const SizedBox(height: 5),
                       Text(
                         _currencyFormat.format(_dailyBudget),
@@ -687,13 +784,13 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    AppStrings.get(context, 'expenses'),
+                    AppStrings.get(context, 'expenses', languageCode: _selectedLanguage),
                     style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   ElevatedButton.icon(
                     onPressed: _showAddExpenseDialog,
                     icon: const Icon(Icons.add),
-                    label: Text(AppStrings.get(context, 'add_expense')),
+                    label: Text(AppStrings.get(context, 'add_expense', languageCode: _selectedLanguage)),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue,
                       foregroundColor: Colors.white,
@@ -703,7 +800,7 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
               ),
               const SizedBox(height: 5),
               Text(
-                AppStrings.get(context, 'swipe_hint'),
+                AppStrings.get(context, 'swipe_hint', languageCode: _selectedLanguage),
                 style: const TextStyle(fontSize: 12, color: Colors.grey, fontStyle: FontStyle.italic),
               ),
               const SizedBox(height: 10),
@@ -711,7 +808,7 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
               // Expenses List
               Expanded(
                 child: _expenses.isEmpty
-                    ? Center(child: Text(AppStrings.get(context, 'no_expenses'), style: const TextStyle(color: Colors.grey)))
+                    ? Center(child: Text(AppStrings.get(context, 'no_expenses', languageCode: _selectedLanguage), style: const TextStyle(color: Colors.grey)))
                     : ListView.builder(
                         itemCount: _expenses.length,
                         itemBuilder: (context, index) {
