@@ -17,8 +17,18 @@ Il codice sorgente si trova nella cartella `flutter_app/`.
 *   **Export Excel**: Esportazione report spese in formato .xlsx.
 *   **Internazionalizzazione**: Supporto italiano/inglese.
 *   **Valute Personalizzabili**: Supporto per oltre 20 valute (EUR, USD, GBP, ecc.) selezionabili dalle impostazioni.
+*   **Multilingua**: Supporto completo per Italiano, Inglese, Spagnolo, Francese e Tedesco.
+*   **Multi-valuta**: Supporto per oltre 20 valute mondiali.
 *   **Design Moderno**: Material Design 3 con supporto tema scuro/chiaro.
 *   **Cross-Platform**: Supporto nativo per Android, Linux Desktop e **Windows**.
+
+## 🌍 Lingue / Languages
+
+*   🇮🇹 [Italiano](README.md)
+*   🇬🇧 [English](README_EN.md) (To be created)
+*   🇪🇸 [Español](README_ES.md)
+*   🇫🇷 [Français](README_FR.md)
+*   🇩🇪 [Deutsch](README_DE.md)
 
 ### Piattaforme Supportate
 
