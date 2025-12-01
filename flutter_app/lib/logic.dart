@@ -118,29 +118,26 @@ class Expense {
 }
 
 
+// Tipi di periodo budget
+enum BudgetPeriod {
+  monthly,
+  weekly,
+  biweekly,
+  yearly,
+  custom
+}
+
 class BudgetLogic {
   /// Calcola i giorni mancanti alla data target.
   static int calculateDays(DateTime currentDate, {int targetDay = 27}) {
-    DateTime targetDate;
-    
-    if (currentDate.day > targetDay) {
-      if (currentDate.month == 12) {
-        targetDate = DateTime(currentDate.year + 1, 1, targetDay);
-      } else {
-        targetDate = DateTime(currentDate.year, currentDate.month + 1, targetDay);
-      }
-    } else {
-      try {
-        targetDate = DateTime(currentDate.year, currentDate.month, targetDay);
-      } catch (e) {
-        int lastDay = DateUtils.getDaysInMonth(currentDate.year, currentDate.month);
-        targetDate = DateTime(currentDate.year, currentDate.month, lastDay);
-      }
-    }
-
-    final todayMidnight = DateTime(currentDate.year, currentDate.month, currentDate.day);
+    // La logica qui è generica: calcola la differenza tra due date
+    // La data target deve essere passata correttamente dall'esterno
+    return 0; // Questo metodo è deprecato in favore del calcolo diretto in main, ma lo manteniamo per compatibilità se serve
+  }
+  
+  static int getDaysRemaining(DateTime now, DateTime targetDate) {
+    final todayMidnight = DateTime(now.year, now.month, now.day);
     final targetMidnight = DateTime(targetDate.year, targetDate.month, targetDate.day);
-    
     return targetMidnight.difference(todayMidnight).inDays + 1;
   }
 
@@ -155,17 +152,43 @@ class BudgetLogic {
     return (totalBudget - totalExpenses) / days;
   }
   
-  /// Determina la data target iniziale basata sulla data corrente.
-  static DateTime getInitialTargetDate(DateTime now, {int targetDay = 27}) {
-    if (now.day > targetDay) {
-      if (now.month == 12) {
-        return DateTime(now.year + 1, 1, targetDay);
-      } else {
-        return DateTime(now.year, now.month + 1, targetDay);
-      }
-    } else {
-      return DateTime(now.year, now.month, targetDay);
+  /// Determina la data target iniziale basata sul periodo scelto.
+  static DateTime getNextTargetDate(DateTime now, BudgetPeriod period, {int targetDay = 27}) {
+    final today = DateTime(now.year, now.month, now.day);
+    
+    switch (period) {
+      case BudgetPeriod.weekly:
+        // Fine alla prossima Domenica
+        int daysUntilSunday = DateTime.sunday - today.weekday;
+        if (daysUntilSunday < 0) daysUntilSunday += 7;
+        return today.add(Duration(days: daysUntilSunday));
+        
+      case BudgetPeriod.biweekly:
+        // Fine tra 14 giorni (o prossimo ciclo di 2 settimane)
+        return today.add(const Duration(days: 13)); // +13 perché oggi conta
+        
+      case BudgetPeriod.yearly:
+        // Fine dell'anno corrente
+        return DateTime(today.year, 12, 31);
+        
+      case BudgetPeriod.monthly:
+      default:
+        // Logica mensile esistente (default giorno 27)
+        if (today.day > targetDay) {
+          if (today.month == 12) {
+            return DateTime(today.year + 1, 1, targetDay);
+          } else {
+            return DateTime(today.year, today.month + 1, targetDay);
+          }
+        } else {
+          return DateTime(today.year, today.month, targetDay);
+        }
     }
+  }
+  
+  /// Metodo legacy per compatibilità
+  static DateTime getInitialTargetDate(DateTime now, {int targetDay = 27}) {
+    return getNextTargetDate(now, BudgetPeriod.monthly, targetDay: targetDay);
   }
 }
 

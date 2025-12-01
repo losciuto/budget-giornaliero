@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io' show Platform, File;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -13,11 +14,51 @@ import 'package:path_provider/path_provider.dart';
 import 'logic.dart';
 import 'statistics_screen.dart';
 import 'backup_manager.dart';
+import 'search_filter_screen.dart';
+import 'smart_features.dart';
+import 'package:local_notifier/local_notifier.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  if (Platform.isWindows || Platform.isLinux) {
+    await localNotifier.setup(
+      appName: 'Budget Giornaliero',
+      shortcutPolicy: ShortcutPolicy.requireCreate,
+    );
+  }
+  
   tz.initializeTimeZones();
   runApp(const BudgetApp());
+}
+
+// Intent classes for keyboard shortcuts
+class _AddExpenseIntent extends Intent {
+  const _AddExpenseIntent();
+}
+
+class _SearchIntent extends Intent {
+  const _SearchIntent();
+}
+
+class _StatisticsIntent extends Intent {
+  const _StatisticsIntent();
+}
+
+class _ExportIntent extends Intent {
+  const _ExportIntent();
+}
+
+class _BackupIntent extends Intent {
+  const _BackupIntent();
+}
+
+class _SettingsIntent extends Intent {
+  const _SettingsIntent();
+}
+
+class _RefreshIntent extends Intent {
+  const _RefreshIntent();
 }
 
 // Simple Localization
@@ -64,6 +105,11 @@ class AppStrings {
       'backup_error': 'Errore durante il backup',
       'import_success': 'Dati importati con successo!',
       'import_error': 'Errore durante l\'importazione',
+      'period': 'Periodo Budget',
+      'period_monthly': 'Mensile',
+      'period_weekly': 'Settimanale',
+      'period_biweekly': 'Bisettimanale',
+      'period_yearly': 'Annuale',
     },
     'en': {
       'title': 'Daily Budget',
@@ -106,6 +152,11 @@ class AppStrings {
       'backup_error': 'Error during backup',
       'import_success': 'Data imported successfully!',
       'import_error': 'Error during import',
+      'period': 'Budget Period',
+      'period_monthly': 'Monthly',
+      'period_weekly': 'Weekly',
+      'period_biweekly': 'Bi-weekly',
+      'period_yearly': 'Yearly',
     },
     'es': {
       'title': 'Presupuesto Diario',
@@ -148,6 +199,11 @@ class AppStrings {
       'backup_error': 'Error durante la copia',
       'import_success': '¡Datos importados con éxito!',
       'import_error': 'Error durante la importación',
+      'period': 'Período Presupuesto',
+      'period_monthly': 'Mensual',
+      'period_weekly': 'Semanal',
+      'period_biweekly': 'Quincenal',
+      'period_yearly': 'Anual',
     },
     'fr': {
       'title': 'Budget Quotidien',
@@ -190,6 +246,11 @@ class AppStrings {
       'backup_error': 'Erreur lors de la sauvegarde',
       'import_success': 'Données importées avec succès !',
       'import_error': 'Erreur lors de l\'importation',
+      'period': 'Période Budget',
+      'period_monthly': 'Mensuel',
+      'period_weekly': 'Hebdomadaire',
+      'period_biweekly': 'Bihebdomadaire',
+      'period_yearly': 'Annuel',
     },
     'de': {
       'title': 'Tagesbudget',
@@ -232,6 +293,11 @@ class AppStrings {
       'backup_error': 'Fehler bei der Sicherung',
       'import_success': 'Daten erfolgreich importiert!',
       'import_error': 'Fehler beim Importieren',
+      'period': 'Budgetzeitraum',
+      'period_monthly': 'Monatlich',
+      'period_weekly': 'Wöchentlich',
+      'period_biweekly': 'Zweiwöchentlich',
+      'period_yearly': 'Jährlich',
     },
   };
 
@@ -295,6 +361,7 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
   // Language and Currency settings
   String _selectedLanguage = 'it';
   String _selectedCurrency = 'EUR';
+  BudgetPeriod _selectedPeriod = BudgetPeriod.monthly;
 
   late DateFormat _dateFormat;
   late NumberFormat _currencyFormat;
@@ -349,29 +416,41 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
   }
 
   Future<void> _initNotifications() async {
-    // Notifications are only supported on Android and iOS
-    if (!Platform.isAndroid && !Platform.isIOS) {
-      return;
+    // Android & iOS initialization
+    if (Platform.isAndroid || Platform.isIOS) {
+      const AndroidInitializationSettings initializationSettingsAndroid =
+          AndroidInitializationSettings('@mipmap/ic_launcher');
+      const InitializationSettings initializationSettings =
+          InitializationSettings(android: initializationSettingsAndroid);
+      
+      await _notificationsPlugin.initialize(initializationSettings);
     }
-    
-    const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
-    const InitializationSettings initializationSettings =
-        InitializationSettings(android: initializationSettingsAndroid);
-    
-    await _notificationsPlugin.initialize(initializationSettings);
+    // Desktop initialization is handled in main()
   }
 
   Future<void> _scheduleNotification() async {
-    // Notifications are only supported on Android
-    if (!Platform.isAndroid) {
-      return;
-    }
-    
     if (!_notificationsEnabled) {
-      await _notificationsPlugin.cancelAll();
+      if (Platform.isAndroid) {
+        await _notificationsPlugin.cancelAll();
+      }
       return;
     }
+
+    // Windows & Linux: Show immediate notification (since scheduling requires background service)
+    if (Platform.isWindows || Platform.isLinux) {
+      final notification = LocalNotification(
+        identifier: 'daily_budget_reminder',
+        title: AppStrings.get(context, 'notification_title', languageCode: _selectedLanguage),
+        body: AppStrings.get(context, 'notification_body', languageCode: _selectedLanguage)
+            .replaceAll('{amount}', _currencyFormat.format(_calculatedDaily)),
+      );
+      
+      notification.show();
+      return;
+    }
+
+    // Android: Schedule daily notification
+    if (Platform.isAndroid) {
 
     await _notificationsPlugin.zonedSchedule(
       0,
@@ -391,6 +470,7 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
       uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
       matchDateTimeComponents: DateTimeComponents.time,
     );
+    }
   }
 
   tz.TZDateTime _nextInstanceOf9AM() {
@@ -429,6 +509,13 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
       // Load Language and Currency
       _selectedLanguage = prefs.getString('language') ?? 'it';
       _selectedCurrency = prefs.getString('currency') ?? 'EUR';
+      
+      // Load Budget Period
+      final periodStr = prefs.getString('budget_period') ?? 'monthly';
+      _selectedPeriod = BudgetPeriod.values.firstWhere(
+        (p) => p.toString().split('.').last == periodStr,
+        orElse: () => BudgetPeriod.monthly,
+      );
     });
     _updateFormatters();
     _updateCalculations();
@@ -442,20 +529,16 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
     await prefs.setBool('notifications_enabled', _notificationsEnabled);
     await prefs.setString('language', _selectedLanguage);
     await prefs.setString('currency', _selectedCurrency);
+    await prefs.setString('budget_period', _selectedPeriod.toString().split('.').last);
     _scheduleNotification();
   }
 
   void _updateCalculations() {
     setState(() {
-
-      
       final today = DateTime.now();
-      final todayMidnight = DateTime(today.year, today.month, today.day);
-      final targetMidnight = DateTime(_targetDate.year, _targetDate.month, _targetDate.day);
+      int diff = BudgetLogic.getDaysRemaining(today, _targetDate);
       
-      int diff = targetMidnight.difference(todayMidnight).inDays + 1;
-      
-      if (targetMidnight.isBefore(todayMidnight)) {
+      if (diff <= 0) {
         _daysRemaining = AppStrings.get(context, 'expired', languageCode: _selectedLanguage);
         diff = 0;
       } else {
@@ -754,6 +837,19 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
     );
   }
 
+  void _showSearchFilter() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SearchFilterScreen(
+          expenses: _expenses,
+          languageCode: _selectedLanguage,
+          currencyFormat: _currencyFormat,
+        ),
+      ),
+    );
+  }
+
   Future<void> _exportBackup() async {
     try {
       final data = await BackupManager.exportData(
@@ -903,10 +999,54 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
                     ),
                   ),
                   
+                  // Budget Period Selection
+                  ListTile(
+                    title: Text(AppStrings.get(context, 'period', languageCode: _selectedLanguage)),
+                    trailing: DropdownButton<BudgetPeriod>(
+                      value: _selectedPeriod,
+                      onChanged: (BudgetPeriod? newValue) {
+                        if (newValue != null) {
+                          setState(() {
+                            _selectedPeriod = newValue;
+                          });
+                          this.setState(() {
+                            _selectedPeriod = newValue;
+                            // Ricalcola la data target in base al nuovo periodo
+                            _targetDate = BudgetLogic.getNextTargetDate(DateTime.now(), _selectedPeriod);
+                          });
+                          _updateCalculations();
+                        }
+                      },
+                      items: BudgetPeriod.values.where((p) => p != BudgetPeriod.custom).map((period) {
+                        String label;
+                        switch (period) {
+                          case BudgetPeriod.monthly:
+                            label = AppStrings.get(context, 'period_monthly', languageCode: _selectedLanguage);
+                            break;
+                          case BudgetPeriod.weekly:
+                            label = AppStrings.get(context, 'period_weekly', languageCode: _selectedLanguage);
+                            break;
+                          case BudgetPeriod.biweekly:
+                            label = AppStrings.get(context, 'period_biweekly', languageCode: _selectedLanguage);
+                            break;
+                          case BudgetPeriod.yearly:
+                            label = AppStrings.get(context, 'period_yearly', languageCode: _selectedLanguage);
+                            break;
+                          default:
+                            label = period.toString();
+                        }
+                        return DropdownMenuItem<BudgetPeriod>(
+                          value: period,
+                          child: Text(label),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                  
                   const Divider(),
 
-                  // Show notifications option only on Android and iOS
-                  if (Platform.isAndroid || Platform.isIOS)
+                  // Show notifications option on supported platforms
+                  if (Platform.isAndroid || Platform.isIOS || Platform.isWindows || Platform.isLinux)
                     SwitchListTile(
                       title: Text(AppStrings.get(context, 'enable_notifications', languageCode: _selectedLanguage)),
                       value: _notificationsEnabled,
@@ -921,7 +1061,7 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
                         _saveData();
                       },
                     ),
-                  if (Platform.isAndroid || Platform.isIOS)
+                  if (Platform.isAndroid || Platform.isIOS || Platform.isWindows || Platform.isLinux)
                     const Divider(),
                   const Text(
                     "Autore: Massimo Lo Sciuto\n"
@@ -929,6 +1069,14 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
                     "Sviluppo: Gemini 3 Pro\n"
                     "Versione: 2.2.0 (Flutter)",
                   ),
+                  const SizedBox(height: 12),
+                  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS)
+                    const Text(
+                      "Shortcuts: Ctrl+N (Nuova), Ctrl+F (Ricerca),\n"
+                      "Ctrl+S (Statistiche), Ctrl+E (Export),\n"
+                      "Ctrl+B (Backup), Ctrl+, (Impostazioni), F5 (Aggiorna)",
+                      style: TextStyle(fontSize: 11, color: Colors.grey),
+                    ),
                 ],
               ),
               actions: [
@@ -954,7 +1102,64 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
     final daysPassed = today.day.toDouble();
     final progress = daysPassed / totalDaysInMonth;
 
-    return Scaffold(
+    return Shortcuts(
+      shortcuts: <LogicalKeySet, Intent>{
+        LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyN): const _AddExpenseIntent(),
+        LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyF): const _SearchIntent(),
+        LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyS): const _StatisticsIntent(),
+        LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyE): const _ExportIntent(),
+        LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyB): const _BackupIntent(),
+        LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.comma): const _SettingsIntent(),
+        LogicalKeySet(LogicalKeyboardKey.f5): const _RefreshIntent(),
+      },
+      child: Actions(
+        actions: <Type, Action<Intent>>{
+          _AddExpenseIntent: CallbackAction<_AddExpenseIntent>(
+            onInvoke: (_) {
+              _showAddExpenseDialog();
+              return null;
+            },
+          ),
+          _SearchIntent: CallbackAction<_SearchIntent>(
+            onInvoke: (_) {
+              _showSearchFilter();
+              return null;
+            },
+          ),
+          _StatisticsIntent: CallbackAction<_StatisticsIntent>(
+            onInvoke: (_) {
+              _showStatistics();
+              return null;
+            },
+          ),
+          _ExportIntent: CallbackAction<_ExportIntent>(
+            onInvoke: (_) {
+              _exportToExcel();
+              return null;
+            },
+          ),
+          _BackupIntent: CallbackAction<_BackupIntent>(
+            onInvoke: (_) {
+              _showBackupDialog();
+              return null;
+            },
+          ),
+          _SettingsIntent: CallbackAction<_SettingsIntent>(
+            onInvoke: (_) {
+              _showInfoDialog();
+              return null;
+            },
+          ),
+          _RefreshIntent: CallbackAction<_RefreshIntent>(
+            onInvoke: (_) {
+              _updateCalculations();
+              return null;
+            },
+          ),
+        },
+        child: Focus(
+          autofocus: true,
+          child: Scaffold(
       body: Center(
         child: Container(
           constraints: const BoxConstraints(maxWidth: 500),
@@ -983,6 +1188,11 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
                         ),
                       ],
                     ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.search, color: Colors.teal),
+                    onPressed: _showSearchFilter,
+                    tooltip: _selectedLanguage == 'it' ? 'Ricerca' : 'Search',
                   ),
                   IconButton(
                     icon: const Icon(Icons.bar_chart, color: Colors.purple),
@@ -1115,7 +1325,34 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
                 ),
               ),
               
-              const SizedBox(height: 20),
+              // Smart Suggestions
+              Builder(
+                builder: (context) {
+                  final suggestions = SmartFeatures.generateSuggestions(
+                    expenses: _expenses,
+                    totalBudget: double.tryParse(_amountController.text.replaceAll(',', '.')) ?? 0.0,
+                    dailyBudget: _dailyBudget,
+                    daysRemaining: int.tryParse(_daysRemaining) ?? 0,
+                    languageCode: _selectedLanguage,
+                  );
+                  
+                  if (suggestions.isEmpty) return const SizedBox(height: 20);
+                  
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 16),
+                      Text(
+                        _selectedLanguage == 'it' ? '💡 Suggerimenti Smart' : '💡 Smart Suggestions',
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 8),
+                      SmartSuggestionsWidget(suggestions: suggestions),
+                      const SizedBox(height: 20),
+                    ],
+                  );
+                },
+              ),
               
               // Expenses Header
               Row(
@@ -1225,6 +1462,9 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
                       ),
               ),
             ],
+          ),
+        ),
+      ),
           ),
         ),
       ),
