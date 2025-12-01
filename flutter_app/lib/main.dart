@@ -11,6 +11,8 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:excel/excel.dart';
 import 'package:path_provider/path_provider.dart';
 import 'logic.dart';
+import 'statistics_screen.dart';
+import 'backup_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -53,6 +55,15 @@ class AppStrings {
       'confirm_clear_all': 'Sei sicuro di voler cancellare tutte le spese?',
       'yes': 'Sì',
       'no': 'No',
+      'category': 'Categoria',
+      'statistics': 'Statistiche',
+      'backup': 'Backup',
+      'backup_export': 'Esporta Backup',
+      'backup_import': 'Importa Backup',
+      'backup_success': 'Backup creato con successo!',
+      'backup_error': 'Errore durante il backup',
+      'import_success': 'Dati importati con successo!',
+      'import_error': 'Errore durante l\'importazione',
     },
     'en': {
       'title': 'Daily Budget',
@@ -86,6 +97,15 @@ class AppStrings {
       'confirm_clear_all': 'Are you sure you want to delete all expenses?',
       'yes': 'Yes',
       'no': 'No',
+      'category': 'Category',
+      'statistics': 'Statistics',
+      'backup': 'Backup',
+      'backup_export': 'Export Backup',
+      'backup_import': 'Import Backup',
+      'backup_success': 'Backup created successfully!',
+      'backup_error': 'Error during backup',
+      'import_success': 'Data imported successfully!',
+      'import_error': 'Error during import',
     },
   };
 
@@ -203,6 +223,11 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
   }
 
   Future<void> _initNotifications() async {
+    // Notifications are only supported on Android and iOS
+    if (!Platform.isAndroid && !Platform.isIOS) {
+      return;
+    }
+    
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
     const InitializationSettings initializationSettings =
@@ -338,49 +363,86 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
   void _showAddExpenseDialog() {
     final descController = TextEditingController();
     final amountController = TextEditingController();
+    String selectedCategoryId = 'other'; // Default categoria
 
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(AppStrings.get(context, 'add_expense', languageCode: _selectedLanguage)),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: descController,
-              decoration: InputDecoration(labelText: AppStrings.get(context, 'description', languageCode: _selectedLanguage)),
-              textCapitalization: TextCapitalization.sentences,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: Text(AppStrings.get(context, 'add_expense', languageCode: _selectedLanguage)),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: descController,
+                decoration: InputDecoration(
+                  labelText: AppStrings.get(context, 'description', languageCode: _selectedLanguage),
+                ),
+                textCapitalization: TextCapitalization.sentences,
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: amountController,
+                decoration: InputDecoration(
+                  labelText: AppStrings.get(context, 'amount', languageCode: _selectedLanguage),
+                ),
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              ),
+              const SizedBox(height: 16),
+              // Selezione Categoria
+              DropdownButtonFormField<String>(
+                value: selectedCategoryId,
+                decoration: InputDecoration(
+                  labelText: AppStrings.get(context, 'category', languageCode: _selectedLanguage),
+                  border: const OutlineInputBorder(),
+                ),
+                items: ExpenseCategory.defaultCategories.map((category) {
+                  return DropdownMenuItem<String>(
+                    value: category.id,
+                    child: Row(
+                      children: [
+                        Icon(category.icon, color: category.color, size: 20),
+                        const SizedBox(width: 12),
+                        Text(category.getName(_selectedLanguage)),
+                      ],
+                    ),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  if (value != null) {
+                    setState(() {
+                      selectedCategoryId = value;
+                    });
+                  }
+                },
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(AppStrings.get(context, 'cancel', languageCode: _selectedLanguage)),
             ),
-            TextField(
-              controller: amountController,
-              decoration: InputDecoration(labelText: AppStrings.get(context, 'amount', languageCode: _selectedLanguage)),
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            ElevatedButton(
+              onPressed: () {
+                final amount = double.tryParse(amountController.text.replaceAll(',', '.'));
+                if (amount != null && amount > 0) {
+                  this.setState(() {
+                    _expenses.insert(0, Expense(
+                      amount: amount,
+                      description: descController.text.isEmpty ? 'Spesa' : descController.text,
+                      date: DateTime.now(),
+                      categoryId: selectedCategoryId,
+                    ));
+                  });
+                  _updateCalculations();
+                  Navigator.pop(context);
+                }
+              },
+              child: Text(AppStrings.get(context, 'add', languageCode: _selectedLanguage)),
             ),
           ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(AppStrings.get(context, 'cancel', languageCode: _selectedLanguage)),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              final amount = double.tryParse(amountController.text.replaceAll(',', '.'));
-              if (amount != null && amount > 0) {
-                setState(() {
-                  _expenses.insert(0, Expense(
-                    amount: amount,
-                    description: descController.text.isEmpty ? 'Spesa' : descController.text,
-                    date: DateTime.now(),
-                  ));
-                });
-                _updateCalculations();
-                Navigator.pop(context);
-              }
-            },
-            child: Text(AppStrings.get(context, 'add', languageCode: _selectedLanguage)),
-          ),
-        ],
       ),
     );
   }
@@ -552,6 +614,109 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
     }
   }
 
+  void _showStatistics() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => StatisticsScreen(
+          expenses: _expenses,
+          languageCode: _selectedLanguage,
+          currencySymbol: _getCurrencySymbol(_selectedCurrency),
+          currencyFormat: _currencyFormat,
+        ),
+      ),
+    );
+  }
+
+  Future<void> _exportBackup() async {
+    try {
+      final data = await BackupManager.exportData(
+        expenses: _expenses,
+        targetDate: _targetDate.toIso8601String(),
+        amount: _amountController.text,
+        notificationsEnabled: _notificationsEnabled,
+        language: _selectedLanguage,
+        currency: _selectedCurrency,
+      );
+
+      if (!mounted) return;
+      final filePath = await BackupManager.saveBackupToFile(data, context);
+
+      if (filePath != null && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('${AppStrings.get(context, 'backup_success', languageCode: _selectedLanguage)}\n$filePath'),
+            duration: const Duration(seconds: 5),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('${AppStrings.get(context, 'backup_error', languageCode: _selectedLanguage)}: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _importBackup() async {
+    try {
+      final backupData = await BackupManager.loadBackupFromFile(context);
+
+      if (backupData != null) {
+        final importedData = BackupManager.importData(backupData);
+
+        if (importedData != null) {
+          setState(() {
+            _targetDate = DateTime.parse(importedData['targetDate']);
+            _amountController.text = importedData['amount'];
+            _notificationsEnabled = importedData['notificationsEnabled'];
+            _selectedLanguage = importedData['language'];
+            _selectedCurrency = importedData['currency'];
+            _expenses = importedData['expenses'];
+          });
+
+          _updateFormatters();
+          _updateCalculations();
+
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(AppStrings.get(context, 'import_success', languageCode: _selectedLanguage)),
+                backgroundColor: Colors.green,
+              ),
+            );
+          }
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('${AppStrings.get(context, 'import_error', languageCode: _selectedLanguage)}: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  void _showBackupDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => BackupDialog(
+        onExport: _exportBackup,
+        onImport: _importBackup,
+        languageCode: _selectedLanguage,
+      ),
+    );
+  }
+
+
   void _showInfoDialog() {
     showDialog(
       context: context,
@@ -611,21 +776,24 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
                   
                   const Divider(),
 
-                  SwitchListTile(
-                    title: Text(AppStrings.get(context, 'enable_notifications', languageCode: _selectedLanguage)),
-                    value: _notificationsEnabled,
-                    onChanged: (bool value) {
-                      setState(() {
-                        _notificationsEnabled = value;
-                      });
-                      // Update main state as well
-                      this.setState(() {
-                        _notificationsEnabled = value;
-                      });
-                      _saveData();
-                    },
-                  ),
-                  const Divider(),
+                  // Show notifications option only on Android and iOS
+                  if (Platform.isAndroid || Platform.isIOS)
+                    SwitchListTile(
+                      title: Text(AppStrings.get(context, 'enable_notifications', languageCode: _selectedLanguage)),
+                      value: _notificationsEnabled,
+                      onChanged: (bool value) {
+                        setState(() {
+                          _notificationsEnabled = value;
+                        });
+                        // Update main state as well
+                        this.setState(() {
+                          _notificationsEnabled = value;
+                        });
+                        _saveData();
+                      },
+                    ),
+                  if (Platform.isAndroid || Platform.isIOS)
+                    const Divider(),
                   const Text(
                     "Autore: Massimo Lo Sciuto\n"
                     "Supporto: Antigravity\n"
@@ -686,6 +854,16 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
                         ),
                       ],
                     ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.bar_chart, color: Colors.purple),
+                    onPressed: _showStatistics,
+                    tooltip: AppStrings.get(context, 'statistics', languageCode: _selectedLanguage),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.backup, color: Colors.orange),
+                    onPressed: _showBackupDialog,
+                    tooltip: AppStrings.get(context, 'backup', languageCode: _selectedLanguage),
                   ),
                   IconButton(
                     icon: const Icon(Icons.file_download, color: Colors.green),
@@ -872,11 +1050,27 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
                             child: Card(
                               margin: const EdgeInsets.symmetric(vertical: 4),
                               child: ListTile(
-                                leading: const CircleAvatar(
-                                  backgroundColor: Colors.redAccent,
-                                  child: Icon(Icons.remove, color: Colors.white, size: 16),
+                                leading: CircleAvatar(
+                                  backgroundColor: expense.category.color.withOpacity(0.2),
+                                  child: Icon(
+                                    expense.category.icon,
+                                    color: expense.category.color,
+                                    size: 24,
+                                  ),
                                 ),
-                                title: Text(expense.description),
+                                title: Row(
+                                  children: [
+                                    Expanded(child: Text(expense.description)),
+                                    Text(
+                                      expense.category.getName(_selectedLanguage),
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: expense.category.color,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                                 subtitle: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [

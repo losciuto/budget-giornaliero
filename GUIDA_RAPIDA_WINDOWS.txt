@@ -1,0 +1,167 @@
+═══════════════════════════════════════════════════════════════
+  BUDGET GIORNALIERO - GUIDA RAPIDA WINDOWS
+═══════════════════════════════════════════════════════════════
+
+📦 COSA PORTARE SU WINDOWS
+───────────────────────────────────────────────────────────────
+
+Copia TUTTA la cartella:
+  budget-giornaliero/flutter_app/
+
+File importanti:
+  ✓ lib/              (codice sorgente)
+  ✓ windows/          (configurazione Windows - NUOVO!)
+  ✓ assets/           (icone)
+  ✓ pubspec.yaml      (dipendenze)
+  ✓ build_windows.bat (script automatico - NUOVO!)
+
+NON serve copiare:
+  ✗ build/
+  ✗ .dart_tool/
+
+
+🔧 PREREQUISITI WINDOWS
+───────────────────────────────────────────────────────────────
+
+1. Visual Studio 2022 Community (GRATUITO)
+   https://visualstudio.microsoft.com/downloads/
+   
+   Durante installazione seleziona:
+   ☑ Desktop development with C++
+   ☑ Windows 10 SDK
+   ☑ CMake tools
+
+2. Flutter SDK
+   https://docs.flutter.dev/get-started/install/windows
+   
+   - Scarica ZIP
+   - Estrai in C:\flutter
+   - Aggiungi C:\flutter\bin al PATH
+
+3. Git for Windows
+   https://git-scm.com/download/win
+
+
+🚀 COMPILAZIONE (METODO FACILE)
+───────────────────────────────────────────────────────────────
+
+1. Copia flutter_app su Windows
+2. Doppio click su: build_windows.bat
+3. Attendi...
+4. FATTO! L'exe è in: build\windows\x64\runner\Release\
+
+
+🚀 COMPILAZIONE (METODO MANUALE)
+───────────────────────────────────────────────────────────────
+
+Apri PowerShell o Command Prompt:
+
+  cd C:\percorso\verso\flutter_app
+  flutter doctor
+  flutter pub get
+  flutter build windows --release
+
+L'eseguibile sarà in:
+  build\windows\x64\runner\Release\budget_giornaliero.exe
+
+
+📦 DISTRIBUZIONE
+───────────────────────────────────────────────────────────────
+
+IMPORTANTE: Distribuisci TUTTA la cartella Release!
+
+  build\windows\x64\runner\Release\
+  ├── budget_giornaliero.exe  ← Eseguibile
+  ├── flutter_windows.dll     ← NECESSARIO
+  ├── data\                   ← NECESSARIO
+  └── altre DLL               ← NECESSARIE
+
+Puoi:
+  - Comprimere in ZIP
+  - Oppure creare installer MSIX:
+    flutter pub run msix:create
+
+
+✨ FUNZIONALITÀ SU WINDOWS
+───────────────────────────────────────────────────────────────
+
+  ✅ Calcolo budget giornaliero
+  ✅ Gestione spese
+  ✅ Salvataggio automatico dati
+  ✅ Export Excel
+  ✅ Multilingua (Italiano/English)
+  ✅ Multi-valuta (EUR, USD, GBP, ecc.)
+  ✅ Tema scuro
+  ✅ Interfaccia nativa Windows
+  
+  ❌ Notifiche push (non supportate su Windows desktop)
+
+
+🔍 VERIFICA INSTALLAZIONE
+───────────────────────────────────────────────────────────────
+
+Dopo aver installato i prerequisiti, verifica:
+
+  flutter doctor
+
+Deve mostrare:
+  [✓] Flutter
+  [✓] Windows Version
+  [✓] Visual Studio
+  [✓] Connected device
+
+
+⚠️ PROBLEMI COMUNI
+───────────────────────────────────────────────────────────────
+
+"Visual Studio not found"
+→ Installa Visual Studio 2022 con C++ tools
+
+"CMake not found"
+→ Installa CMake da Visual Studio Installer
+
+"Flutter command not found"
+→ Aggiungi Flutter al PATH e riavvia terminale
+
+L'app non si avvia
+→ Distribuisci TUTTA la cartella Release, non solo exe
+
+
+📚 DOCUMENTAZIONE COMPLETA
+───────────────────────────────────────────────────────────────
+
+Per maggiori dettagli consulta:
+
+  README_WINDOWS.md           - Guida completa Windows
+  WINDOWS_CHECKLIST.md        - Checklist dettagliata
+  OTTIMIZZAZIONI_WINDOWS.md   - Modifiche tecniche
+
+
+📊 MODIFICHE EFFETTUATE
+───────────────────────────────────────────────────────────────
+
+✓ Aggiunta cartella windows/ con configurazione
+✓ Ottimizzato codice per multi-piattaforma
+✓ Gestione notifiche compatibile Windows
+✓ Creato script build automatico
+✓ Aggiunta configurazione MSIX
+✓ Documentazione completa
+
+
+📞 INFO
+───────────────────────────────────────────────────────────────
+
+Autore:    Massimo Lo Sciuto
+Versione:  2.1.0 (Flutter)
+Supporto:  Antigravity (Gemini 3 Pro)
+Data:      Dicembre 2025
+
+Piattaforme supportate:
+  • Android
+  • Linux
+  • Windows
+
+
+═══════════════════════════════════════════════════════════════
+  BUONA COMPILAZIONE! 🚀
+═══════════════════════════════════════════════════════════════

@@ -1,7 +1,7 @@
 name: budget_giornaliero
 description: Un'applicazione per calcolare il budget giornaliero.
 publish_to: 'none'
-version: 1.1.1+1
+version: 2.2.0+2
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
@@ -17,6 +17,8 @@ dependencies:
   timezone: ^0.9.2
   excel: ^4.0.3
   path_provider: ^2.1.0
+  fl_chart: ^0.68.0
+  file_picker: ^8.0.0+1
   flutter_localizations:
     sdk: flutter
 
@@ -25,6 +27,7 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^4.0.0
   flutter_launcher_icons: ^0.13.1
+  msix: ^3.16.7
 
 flutter_icons:
   android: true
@@ -36,3 +39,14 @@ flutter_icons:
 
 flutter:
   uses-material-design: true
+
+# Configurazione MSIX per Windows
+msix_config:
+  display_name: Budget Giornaliero
+  publisher_display_name: Massimo Lo Sciuto
+  identity_name: com.losciuto.budgetgiornaliero
+  msix_version: 1.1.1.0
+  logo_path: assets\icon.png
+  capabilities: internetClient
+  languages: it-IT, en-US
+

@@ -18,7 +18,22 @@ Il codice sorgente si trova nella cartella `flutter_app/`.
 *   **Internazionalizzazione**: Supporto italiano/inglese.
 *   **Valute Personalizzabili**: Supporto per oltre 20 valute (EUR, USD, GBP, ecc.) selezionabili dalle impostazioni.
 *   **Design Moderno**: Material Design 3 con supporto tema scuro/chiaro.
-*   **Cross-Platform**: Supporto nativo per Android e Linux Desktop.
+*   **Cross-Platform**: Supporto nativo per Android, Linux Desktop e **Windows**.
+
+### Piattaforme Supportate
+
+| Piattaforma | Stato | Note |
+|-------------|-------|------|
+| 🤖 Android | ✅ Completo | Tutte le funzionalità incluse notifiche |
+| 🐧 Linux | ✅ Completo | Desktop nativo (no notifiche) |
+| 🪟 Windows | ✅ Completo | Desktop nativo (no notifiche) |
+
+### Documentazione Specifica
+
+- **Windows**: Vedi [GUIDA_RAPIDA_WINDOWS.txt](GUIDA_RAPIDA_WINDOWS.txt) per istruzioni rapide
+- **Windows (Dettagliata)**: Vedi [flutter_app/README_WINDOWS.md](flutter_app/README_WINDOWS.md)
+- **Checklist Windows**: Vedi [WINDOWS_CHECKLIST.md](WINDOWS_CHECKLIST.md)
+- **Ottimizzazioni**: Vedi [OTTIMIZZAZIONI_WINDOWS.md](OTTIMIZZAZIONI_WINDOWS.md)
 
 ### Guida Rapida
 Per iniziare a sviluppare o eseguire la versione Flutter:

@@ -1,25 +1,122 @@
 import 'package:flutter/material.dart';
 
+// Categoria di spesa
+class ExpenseCategory {
+  final String id;
+  final String nameIt;
+  final String nameEn;
+  final IconData icon;
+  final Color color;
+
+  const ExpenseCategory({
+    required this.id,
+    required this.nameIt,
+    required this.nameEn,
+    required this.icon,
+    required this.color,
+  });
+
+  String getName(String languageCode) {
+    return languageCode == 'it' ? nameIt : nameEn;
+  }
+
+  // Categorie predefinite
+  static const List<ExpenseCategory> defaultCategories = [
+    ExpenseCategory(
+      id: 'food',
+      nameIt: 'Cibo',
+      nameEn: 'Food',
+      icon: Icons.restaurant,
+      color: Color(0xFFFF6B6B),
+    ),
+    ExpenseCategory(
+      id: 'transport',
+      nameIt: 'Trasporti',
+      nameEn: 'Transport',
+      icon: Icons.directions_car,
+      color: Color(0xFF4ECDC4),
+    ),
+    ExpenseCategory(
+      id: 'entertainment',
+      nameIt: 'Svago',
+      nameEn: 'Entertainment',
+      icon: Icons.movie,
+      color: Color(0xFFFFE66D),
+    ),
+    ExpenseCategory(
+      id: 'shopping',
+      nameIt: 'Shopping',
+      nameEn: 'Shopping',
+      icon: Icons.shopping_bag,
+      color: Color(0xFFA8E6CF),
+    ),
+    ExpenseCategory(
+      id: 'health',
+      nameIt: 'Salute',
+      nameEn: 'Health',
+      icon: Icons.local_hospital,
+      color: Color(0xFFFF8B94),
+    ),
+    ExpenseCategory(
+      id: 'bills',
+      nameIt: 'Bollette',
+      nameEn: 'Bills',
+      icon: Icons.receipt_long,
+      color: Color(0xFFFFA07A),
+    ),
+    ExpenseCategory(
+      id: 'other',
+      nameIt: 'Altro',
+      nameEn: 'Other',
+      icon: Icons.more_horiz,
+      color: Color(0xFFB0B0B0),
+    ),
+  ];
+
+  static ExpenseCategory? findById(String id) {
+    try {
+      return defaultCategories.firstWhere((cat) => cat.id == id);
+    } catch (e) {
+      return null;
+    }
+  }
+}
 
 class Expense {
   final double amount;
   final String description;
   final DateTime date;
+  final String? categoryId; // Nullable per retrocompatibilità
 
-  Expense({required this.amount, required this.description, required this.date});
+  Expense({
+    required this.amount,
+    required this.description,
+    required this.date,
+    this.categoryId,
+  });
+
+  ExpenseCategory get category {
+    if (categoryId != null) {
+      return ExpenseCategory.findById(categoryId!) ?? ExpenseCategory.defaultCategories.last;
+    }
+    return ExpenseCategory.defaultCategories.last; // 'other' come default
+  }
 
   Map<String, dynamic> toJson() => {
         'amount': amount,
         'description': description,
         'date': date.toIso8601String(),
+        if (categoryId != null) 'categoryId': categoryId,
       };
 
   factory Expense.fromJson(Map<String, dynamic> json) => Expense(
         amount: json['amount'],
         description: json['description'],
         date: DateTime.parse(json['date']),
+        categoryId: json['categoryId'], // Può essere null per vecchi dati
       );
 }
+
 
 class BudgetLogic {
   /// Calcola i giorni mancanti alla data target.
