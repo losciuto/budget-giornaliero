@@ -1,31 +1,46 @@
 # Daily Budget - Flutter App
 
-This is the modern version of the Daily Budget application, entirely rewritten in Flutter.
+[Versione Italiana](README.md)
 
-## Project Structure
+Modern daily budget management application, entirely developed in Flutter.
 
-*   `lib/main.dart`: Entry point of the application and User Interface (UI).
-*   `lib/logic.dart`: Business logic (days and budget calculation).
-*   `test/`: Unit tests and Widget tests.
-*   `android/`: Native Android project (configurable in Android Studio).
-*   `linux/`: Configuration for Linux Desktop builds.
+## 📱 Features
 
-## Getting Started
+- **Daily Budget Calculation**: Automatically calculates how much you can spend per day based on total budget and remaining days
+- **Expense Management**: Add, view, and delete expenses with swipe-to-delete
+- **Running Balance**: View remaining balance after each expense
+- **Multilingual**: Support for Italian and English
+- **Multi-currency**: Support for 20+ currencies (EUR, USD, GBP, JPY, CHF, CAD, AUD, CNY, INR, BRL, RUB, KRW, MXN, ZAR, SEK, NOK, DKK, PLN, TRY, AED)
+- **Daily Notifications**: Daily reminders of available budget (Android only)
+- **Excel Export**: Export budget summary and expenses to Excel format with professional formatting
+- **Quick Clear**: Delete all expenses with a single tap
+- **Cross-platform**: Available for Android and Linux Desktop
+
+## 🏗️ Project Structure
+
+- `lib/main.dart`: Application entry point and User Interface (UI)
+- `lib/logic.dart`: Business logic (days and budget calculation)
+- `test/`: Unit tests and Widget tests
+- `android/`: Native Android project (configurable in Android Studio)
+- `linux/`: Configuration for Linux Desktop builds
+- `assets/`: Application resources (icons)
+
+## 🚀 Getting Started
 
 ### Prerequisites
-*   [Flutter SDK](https://flutter.dev/docs/get-started/install) installed and configured in PATH.
-*   A code editor (VS Code or Android Studio) with Flutter/Dart plugins installed.
-*   **Android Build**: Requires NDK version 27.0.12077973 or higher and Java 8 core library desugaring support (already configured in `build.gradle`).
+- [Flutter SDK](https://flutter.dev/docs/get-started/install) installed and configured in PATH
+- A code editor (VS Code or Android Studio) with Flutter/Dart plugins installed
+- **Android Build**: Requires NDK version 27.0.12077973 or higher and Java 8 core library desugaring support (already configured in `build.gradle`)
 
 ### Running
-1.  Get dependencies:
-    ```bash
-    flutter pub get
-    ```
-2.  Start the app (select target device if necessary):
-    ```bash
-    flutter run
-    ```
+1. Get dependencies:
+   ```bash
+   flutter pub get
+   ```
+2. Start the app (select target device if necessary):
+   ```bash
+   flutter run
+   ```
 
 ### Testing
 To verify that everything works correctly:
@@ -33,13 +48,13 @@ To verify that everything works correctly:
 flutter test
 ```
 
-## Android Studio
+## 🔧 Android Studio
 For specific changes to the Android part (e.g., `AndroidManifest.xml`, `build.gradle`):
-1.  Open Android Studio.
-2.  Select **Open**.
-3.  Choose the `android` folder inside `flutter_app` (NOT the main `flutter_app` folder).
+1. Open Android Studio
+2. Select **Open**
+3. Choose the `android` folder inside `flutter_app` (NOT the main `flutter_app` folder)
 
-## Build for Release
+## 📦 Build for Release
 
 ### Android (APK)
 ```bash
@@ -51,4 +66,33 @@ The APK will be generated in `build/app/outputs/flutter-apk/app-release.apk`.
 ```bash
 flutter build linux --release
 ```
-The executable will be in `build/linux/x64/release/bundle/`.
+The executable will be in `build/linux/x64/release/bundle/budget_giornaliero`.
+
+## 🎨 Icon Customization
+
+To modify the app icon:
+1. Replace `assets/icon.png` with your icon (1024x1024 px recommended)
+2. Run:
+   ```bash
+   flutter pub run flutter_launcher_icons
+   ```
+
+## 📚 Main Dependencies
+
+- `flutter_localizations`: Internationalization
+- `google_fonts`: Custom fonts
+- `shared_preferences`: Local data persistence
+- `flutter_local_notifications`: Push notifications
+- `excel`: Excel file export
+- `path_provider`: Filesystem access
+- `intl`: Date and currency formatting
+
+## 👨‍💻 Author
+
+**Massimo Lo Sciuto**
+
+Developed with support from Antigravity and Gemini 2.0 Pro
+
+## 📄 Version
+
+**2.1.0** (Flutter)

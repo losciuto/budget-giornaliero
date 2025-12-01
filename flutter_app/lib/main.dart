@@ -49,6 +49,10 @@ class AppStrings {
       'export_success': 'File esportato con successo!',
       'export_error': 'Errore durante l\'esportazione',
       'swipe_hint': 'Scorri per eliminare',
+      'clear_all': 'Cancella Tutto',
+      'confirm_clear_all': 'Sei sicuro di voler cancellare tutte le spese?',
+      'yes': 'Sì',
+      'no': 'No',
     },
     'en': {
       'title': 'Daily Budget',
@@ -78,6 +82,10 @@ class AppStrings {
       'export_success': 'File exported successfully!',
       'export_error': 'Error during export',
       'swipe_hint': 'Swipe to delete',
+      'clear_all': 'Clear All',
+      'confirm_clear_all': 'Are you sure you want to delete all expenses?',
+      'yes': 'Yes',
+      'no': 'No',
     },
   };
 
@@ -142,8 +150,8 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
   String _selectedLanguage = 'it';
   String _selectedCurrency = 'EUR';
 
-  late final DateFormat _dateFormat;
-  late final NumberFormat _currencyFormat;
+  late DateFormat _dateFormat;
+  late NumberFormat _currencyFormat;
 
   @override
   void initState() {
@@ -288,7 +296,7 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
 
   void _updateCalculations() {
     setState(() {
-      final days = BudgetLogic.calculateDays(DateTime.now(), targetDay: _targetDate.day);
+
       
       final today = DateTime.now();
       final todayMidnight = DateTime(today.year, today.month, today.day);
@@ -371,6 +379,32 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
               }
             },
             child: Text(AppStrings.get(context, 'add', languageCode: _selectedLanguage)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _confirmClearAll() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(AppStrings.get(context, 'clear_all', languageCode: _selectedLanguage)),
+        content: Text(AppStrings.get(context, 'confirm_clear_all', languageCode: _selectedLanguage)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(AppStrings.get(context, 'no', languageCode: _selectedLanguage)),
+          ),
+          TextButton(
+            onPressed: () {
+              setState(() {
+                _expenses.clear();
+              });
+              _updateCalculations();
+              Navigator.pop(context);
+            },
+            child: Text(AppStrings.get(context, 'yes', languageCode: _selectedLanguage), style: const TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -461,9 +495,12 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
         sheet.cell(CellIndex.indexByColumnRow(columnIndex: col, rowIndex: 9)).cellStyle = expenseHeaderStyle;
       }
       
+      // Sort expenses chronologically for the report (Oldest -> Newest)
+      final sortedExpenses = List<Expense>.from(_expenses)..sort((a, b) => a.date.compareTo(b.date));
+
       double runningBalance = totalBudget;
       int rowIndex = 10;
-      for (var expense in _expenses) {
+      for (var expense in sortedExpenses) {
         runningBalance -= expense.amount;
         sheet.appendRow([
           TextCellValue(_dateFormat.format(expense.date)),
@@ -537,11 +574,8 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
                           setState(() {
                             _selectedLanguage = newValue;
                           });
-                          this.setState(() {
-                            _selectedLanguage = newValue;
-                            _updateFormatters();
-                          });
-                          _saveData();
+                          _updateFormatters();
+                          _updateCalculations();
                         }
                       },
                       items: const [
@@ -561,11 +595,8 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
                           setState(() {
                             _selectedCurrency = newValue;
                           });
-                          this.setState(() {
-                            _selectedCurrency = newValue;
-                            _updateFormatters();
-                          });
-                          _saveData();
+                          _updateFormatters();
+                          _updateCalculations();
                         }
                       },
                       items: ['EUR', 'USD', 'GBP', 'JPY', 'CHF', 'CAD', 'AUD', 'CNY', 'INR', 'BRL', 'RUB', 'KRW', 'MXN', 'ZAR', 'SEK', 'NOK', 'DKK', 'PLN', 'TRY', 'AED']
@@ -787,6 +818,13 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
                     AppStrings.get(context, 'expenses', languageCode: _selectedLanguage),
                     style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
+                  if (_expenses.isNotEmpty)
+                    IconButton(
+                      icon: const Icon(Icons.delete_sweep, color: Colors.redAccent),
+                      tooltip: AppStrings.get(context, 'clear_all', languageCode: _selectedLanguage),
+                      onPressed: _confirmClearAll,
+                    ),
+                  const Spacer(),
                   ElevatedButton.icon(
                     onPressed: _showAddExpenseDialog,
                     icon: const Icon(Icons.add),
@@ -813,9 +851,10 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
                         itemCount: _expenses.length,
                         itemBuilder: (context, index) {
                           final expense = _expenses[index];
-                          // Calculate running balance up to this expense
+                          // Calculate running balance up to this expense (chronologically)
+                          // Since the list is reverse chronological (Newest first), we sum from this index to the end.
                           double spentUpToHere = 0.0;
-                          for (int i = 0; i <= index; i++) {
+                          for (int i = index; i < _expenses.length; i++) {
                             spentUpToHere += _expenses[i].amount;
                           }
                           final totalBudget = double.tryParse(_amountController.text.replaceAll(',', '.')) ?? 0.0;
@@ -843,7 +882,7 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
                                   children: [
                                     Text(_dateFormat.format(expense.date)),
                                     Text(
-                                      'Rimanente: ${_currencyFormat.format(remainingAfterExpense)}',
+                                      '${AppStrings.get(context, 'remaining', languageCode: _selectedLanguage)}: ${_currencyFormat.format(remainingAfterExpense)}',
                                       style: TextStyle(
                                         fontSize: 12,
                                         color: remainingAfterExpense < 0 ? Colors.red : Colors.greenAccent,
