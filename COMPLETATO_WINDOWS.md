@@ -110,15 +110,23 @@ flutter build windows --release
 ✅ Gestione spese (aggiungi/elimina)  
 ✅ Salvataggio automatico dati  
 ✅ Export Excel  
-✅ Multilingua (Italiano/English)  
+✅ Notifiche locali (tramite local_notifier)  
+✅ Ricerca e Filtri avanzati  
+✅ Statistiche con grafici  
+✅ Backup e Ripristino JSON  
+✅ Suggerimenti Smart  
+✅ Multilingua (5 lingue: IT, EN, ES, FR, DE)  
 ✅ Multi-valuta (20+ valute)  
 ✅ Tema scuro/chiaro  
 ✅ Interfaccia nativa Windows  
 ✅ Finestra ridimensionabile  
 
-### Non Supportate (Limitazione Windows)
+### Ora Supportate!
 
-❌ Notifiche push (non disponibili su Windows desktop)
+✅ Notifiche locali (tramite `local_notifier`)  
+✅ Ricerca e filtri avanzati  
+✅ Statistiche dettagliate  
+✅ Backup completo  
 
 ---
 
@@ -189,8 +197,8 @@ build\windows\x64\runner\Release\
 
 ## 📞 SUPPORTO
 
-**Autore**: Massimo Lo Sciuto  
-**Versione**: 2.1.0 (Flutter)  
+**Autore**: [losciuto](https://github.com/losciuto/budget-giornaliero)  
+**Versione**: 2.3.0 (Flutter)  
 **Piattaforme**: Android, Linux, Windows  
 **Data**: Dicembre 2025  
 

@@ -86,15 +86,18 @@ Puoi:
 ───────────────────────────────────────────────────────────────
 
   ✅ Calcolo budget giornaliero
-  ✅ Gestione spese
+  ✅ Gestione spese con categorie
   ✅ Salvataggio automatico dati
+  ✅ Notifiche locali (tramite local_notifier)
+  ✅ Ricerca e Filtri avanzati
+  ✅ Statistiche con grafici
+  ✅ Backup e Ripristino JSON
+  ✅ Suggerimenti Smart
   ✅ Export Excel
-  ✅ Multilingua (Italiano/English)
+  ✅ Multilingua (5 lingue: IT, EN, ES, FR, DE)
   ✅ Multi-valuta (EUR, USD, GBP, ecc.)
-  ✅ Tema scuro
+  ✅ Tema scuro/chiaro
   ✅ Interfaccia nativa Windows
-  
-  ❌ Notifiche push (non supportate su Windows desktop)
 
 
 🔍 VERIFICA INSTALLAZIONE
@@ -151,7 +154,7 @@ Per maggiori dettagli consulta:
 📞 INFO
 ───────────────────────────────────────────────────────────────
 
-Autore:    Massimo Lo Sciuto
+Autore:    losciuto (https://github.com/losciuto/budget-giornaliero)
 Versione:  2.3.0 (Flutter)
 Supporto:  Antigravity (Gemini 3 Pro)
 Data:      Dicembre 2025
