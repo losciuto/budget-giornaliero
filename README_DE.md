@@ -2,7 +2,7 @@
 
 Eine einfache und leistungsstarke Flutter-App zur Verwaltung Ihres monatlichen Budgets und zur Kontrolle der täglichen Ausgaben.
 
-![Version](https://img.shields.io/badge/version-2.2.0-blue.svg)
+![Version](https://img.shields.io/badge/version-2.3.0-blue.svg)
 ![Flutter](https://img.shields.io/badge/Flutter-3.0%2B-02569B.svg)
 ![Plattform](https://img.shields.io/badge/platform-Android%20%7C%20Linux%20%7C%20Windows-lightgrey.svg)
 
@@ -13,7 +13,9 @@ Eine einfache und leistungsstarke Flutter-App zur Verwaltung Ihres monatlichen B
 *   **📊 Grafische Statistiken**: Visualisieren Sie Ihre Ausgaben mit interaktiven Kreis- und Balkendiagrammen.
 *   **💾 Vollständiges Backup**: Exportieren und importieren Sie alle Ihre Daten (JSON), um nichts zu verlieren.
 *   **📱 Multiplattform**: Funktioniert perfekt auf Android, Linux und Windows.
-*   **🔔 Tägliche Benachrichtigungen**: Erhalten Sie eine Erinnerung mit Ihrem verbleibenden Budget (nur Android).
+*   **🔔 Tägliche Benachrichtigungen**: Erhalten Sie eine Erinnerung mit Ihrem verbleibenden Budget (Android, Windows, Linux).
+*   **🔍 Suche und Filter**: Finden Sie Ausgaben nach Beschreibung, Kategorie oder Datum.
+*   **💡 Intelligente Vorschläge**: Automatische Tipps basierend auf Ihren Ausgabegewohnheiten.
 *   **🌍 Mehrsprachig**: Verfügbar in Italienisch, Englisch, Spanisch, Französisch und Deutsch.
 *   **💱 Mehrere Währungen**: Unterstützung für über 20 Währungen (EUR, USD, GBP, JPY usw.).
 *   **📤 Excel-Export**: Exportieren Sie Ihren Ausgabenverlauf in eine Excel-Datei (.xlsx).

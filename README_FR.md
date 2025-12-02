@@ -2,7 +2,7 @@
 
 Une application Flutter simple et puissante pour gérer votre budget mensuel et contrôler vos dépenses quotidiennes.
 
-![Version](https://img.shields.io/badge/version-2.2.0-blue.svg)
+![Version](https://img.shields.io/badge/version-2.3.0-blue.svg)
 ![Flutter](https://img.shields.io/badge/Flutter-3.0%2B-02569B.svg)
 ![Plateforme](https://img.shields.io/badge/platform-Android%20%7C%20Linux%20%7C%20Windows-lightgrey.svg)
 
@@ -13,7 +13,9 @@ Une application Flutter simple et puissante pour gérer votre budget mensuel et 
 *   **📊 Statistiques Graphiques**: Visualisez vos dépenses avec des graphiques circulaires et à barres interactifs.
 *   **💾 Sauvegarde Complète**: Exportez et importez toutes vos données (JSON) pour ne rien perdre.
 *   **📱 Multiplateforme**: Fonctionne parfaitement sur Android, Linux et Windows.
-*   **🔔 Notifications Quotidiennes**: Recevez un rappel avec votre budget restant (Android uniquement).
+*   **🔔 Notifications Quotidiennes**: Recevez un rappel avec votre budget restant (Android, Windows, Linux).
+*   **🔍 Recherche et Filtres**: Trouvez des dépenses par description, catégorie ou date.
+*   **💡 Suggestions Intelligentes**: Conseils automatiques basés sur vos habitudes de dépenses.
 *   **🌍 Multilingue**: Disponible en Italien, Anglais, Espagnol, Français et Allemand.
 *   **💱 Multi-devises**: Prise en charge de plus de 20 devises (EUR, USD, GBP, JPY, etc.).
 *   **📤 Exportation Excel**: Exportez votre historique de dépenses vers un fichier Excel (.xlsx).

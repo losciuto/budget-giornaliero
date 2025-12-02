@@ -2,7 +2,7 @@
 
 A cross-platform application (Android, Linux, Windows) to calculate the daily budget available until a specific date of the current month.
 
-**Current Version:** 2.1.0 (Flutter)
+**Current Version:** 2.3.0 (Flutter)
 
 ## 🚀 New Flutter Version
 
@@ -17,8 +17,12 @@ The source code is located in the `flutter_app/` folder.
 *   **Excel Export**: Export expense report to .xlsx format.
 *   **Internationalization**: Italian/English support.
 *   **Customizable Currencies**: Support for over 20 currencies (EUR, USD, GBP, etc.) selectable from settings.
+*   **Search & Filters**: Advanced search by description, category, and date.
+*   **Statistics**: Pie and bar charts to analyze expenses.
+*   **Backup & Restore**: Save and load data in JSON format.
+*   **Smart Suggestions**: Intelligent expense analysis with personalized tips.
 *   **Modern Design**: Material Design 3 with dark/light theme support.
-*   **Cross-Platform**: Native support for Android and Linux Desktop.
+*   **Cross-Platform**: Native support for Android, Linux Desktop, and **Windows**.
 
 ### Quick Start
 To start developing or running the Flutter version:

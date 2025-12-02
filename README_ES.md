@@ -13,7 +13,9 @@ Una aplicación Flutter simple y potente para gestionar tu presupuesto mensual y
 *   **📊 Estadísticas Gráficas**: Visualiza tus gastos con gráficos circulares y de barras interactivos.
 *   **💾 Copia de Seguridad Completa**: Exporta e importa todos tus datos (JSON) para no perder nada.
 *   **📱 Multiplataforma**: Funciona perfectamente en Android, Linux y Windows.
-*   **🔔 Notificaciones Diarias**: Recibe un recordatorio con tu presupuesto restante (solo Android).
+*   **🔔 Notificaciones Diarias**: Recibe un recordatorio con tu presupuesto restante (Android, Windows, Linux).
+*   **🔍 Búsqueda y Filtros**: Encuentra gastos por descripción, categoría o fecha.
+*   **💡 Sugerencias Inteligentes**: Consejos automáticos basados en tus hábitos de gasto.
 *   **🌍 Multilingüe**: Disponible en Italiano, Inglés, Español, Francés y Alemán.
 *   **💱 Multidivisa**: Soporte para más de 20 monedas (EUR, USD, GBP, JPY, etc.).
 *   **📤 Exportación Excel**: Exporta tu historial de gastos a un archivo Excel (.xlsx).

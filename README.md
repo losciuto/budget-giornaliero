@@ -2,7 +2,7 @@
 
 Un'applicazione cross-platform (Android, Linux, Windows) per calcolare il budget giornaliero disponibile fino a una data specifica del mese corrente.
 
-**Versione Corrente:** 2.1.0 (Flutter)
+**Versione Corrente:** 2.3.0 (Flutter)
 
 ## 🚀 Nuova Versione Flutter
 
@@ -19,6 +19,10 @@ Il codice sorgente si trova nella cartella `flutter_app/`.
 *   **Valute Personalizzabili**: Supporto per oltre 20 valute (EUR, USD, GBP, ecc.) selezionabili dalle impostazioni.
 *   **Multilingua**: Supporto completo per Italiano, Inglese, Spagnolo, Francese e Tedesco.
 *   **Multi-valuta**: Supporto per oltre 20 valute mondiali.
+*   **Ricerca e Filtri**: Ricerca avanzata per descrizione, categoria e data.
+*   **Statistiche**: Grafici a torta e a barre per analizzare le spese.
+*   **Backup e Ripristino**: Salvataggio e caricamento dati in formato JSON.
+*   **Suggerimenti Smart**: Analisi intelligente delle spese con consigli personalizzati.
 *   **Design Moderno**: Material Design 3 con supporto tema scuro/chiaro.
 *   **Cross-Platform**: Supporto nativo per Android, Linux Desktop e **Windows**.
 
@@ -35,8 +39,8 @@ Il codice sorgente si trova nella cartella `flutter_app/`.
 | Piattaforma | Stato | Note |
 |-------------|-------|------|
 | 🤖 Android | ✅ Completo | Tutte le funzionalità incluse notifiche |
-| 🐧 Linux | ✅ Completo | Desktop nativo (no notifiche) |
-| 🪟 Windows | ✅ Completo | Desktop nativo (no notifiche) |
+| 🐧 Linux | ✅ Completo | Desktop nativo con notifiche locali |
+| 🪟 Windows | ✅ Completo | Desktop nativo con notifiche locali |
 
 ### Documentazione Specifica
 
