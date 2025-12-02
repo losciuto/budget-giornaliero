@@ -131,11 +131,17 @@ Questo crea un pacchetto MSIX installabile.
 
 L'applicazione è stata ottimizzata per Windows:
 
-- ✅ Le notifiche sono disabilitate automaticamente (non supportate su Windows desktop)
+- ✅ Notifiche locali (tramite local_notifier)
+- ✅ Ricerca e Filtri avanzati per spese
+- ✅ Statistiche dettagliate con grafici
+- ✅ Backup e Ripristino completo (JSON)
+- ✅ Suggerimenti Smart basati sui pattern di spesa
 - ✅ Salvataggio dati funziona con shared_preferences
 - ✅ Export Excel completamente funzionale
 - ✅ Selezione data e interfaccia grafica native Windows
 - ✅ Supporto per temi scuri/chiari di Windows
+- ✅ Multilingua (5 lingue: IT, EN, ES, FR, DE)
+- ✅ Multi-valuta (20+ valute)
 
 ## Risoluzione Problemi
 
@@ -157,13 +163,14 @@ L'applicazione è stata ottimizzata per Windows:
 
 ## Note sulla Versione
 
-Versione: 2.1.0 (Flutter)
+Versione: 2.3.0 (Flutter)
 - Supporto completo per Windows 10/11
 - Interfaccia ottimizzata per desktop
-- Tutte le funzionalità disponibili tranne le notifiche push
+- Notifiche locali tramite local_notifier
+- Tutte le funzionalità avanzate disponibili
 
 ## Supporto
 
 Per problemi o domande:
-- Autore: Massimo Lo Sciuto
-- Repository: [Link al tuo repository]
+- Autore: [losciuto](https://github.com/losciuto/budget-giornaliero)
+- Repository: https://github.com/losciuto/budget-giornaliero

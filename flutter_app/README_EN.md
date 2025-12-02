@@ -9,12 +9,16 @@ Modern daily budget management application, entirely developed in Flutter.
 - **Daily Budget Calculation**: Automatically calculates how much you can spend per day based on total budget and remaining days
 - **Expense Management**: Add, view, and delete expenses with swipe-to-delete
 - **Running Balance**: View remaining balance after each expense
-- **Multilingual**: Support for Italian and English
+- **Multilingual**: Support for 5 languages (Italian, English, Spanish, French, German)
 - **Multi-currency**: Support for 20+ currencies (EUR, USD, GBP, JPY, CHF, CAD, AUD, CNY, INR, BRL, RUB, KRW, MXN, ZAR, SEK, NOK, DKK, PLN, TRY, AED)
-- **Daily Notifications**: Daily reminders of available budget (Android only)
+- **Daily Notifications**: Daily reminders of available budget (Android, Windows, Linux)
+- **Search & Filters**: Advanced search by description, category, and date
+- **Statistics**: Pie and bar charts to analyze expenses
+- **Backup & Restore**: Save and load data in JSON format
+- **Smart Suggestions**: Intelligent expense analysis with personalized tips
 - **Excel Export**: Export budget summary and expenses to Excel format with professional formatting
 - **Quick Clear**: Delete all expenses with a single tap
-- **Cross-platform**: Available for Android and Linux Desktop
+- **Cross-platform**: Available for Android, Linux Desktop, and Windows
 
 ## 🏗️ Project Structure
 
@@ -89,10 +93,10 @@ To modify the app icon:
 
 ## 👨‍💻 Author
 
-**Massimo Lo Sciuto**
+**[losciuto](https://github.com/losciuto/budget-giornaliero)**
 
-Developed with support from Antigravity and Gemini 2.0 Pro
+Developed with support from Antigravity and Gemini 3 Pro
 
 ## 📄 Version
 
-**2.1.0** (Flutter)
+**2.3.0** (Flutter)

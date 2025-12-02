@@ -9,12 +9,16 @@ Applicazione moderna per la gestione del budget giornaliero, sviluppata interame
 - **Calcolo Budget Giornaliero**: Calcola automaticamente quanto puoi spendere al giorno in base al budget totale e ai giorni rimanenti
 - **Gestione Spese**: Aggiungi, visualizza ed elimina spese con swipe-to-delete
 - **Saldo Progressivo**: Visualizza il saldo rimanente dopo ogni spesa
-- **Multilingua**: Supporto per Italiano e Inglese
+- **Multilingua**: Supporto per 5 lingue (Italiano, Inglese, Spagnolo, Francese, Tedesco)
 - **Multi-valuta**: Supporto per 20+ valute (EUR, USD, GBP, JPY, CHF, CAD, AUD, CNY, INR, BRL, RUB, KRW, MXN, ZAR, SEK, NOK, DKK, PLN, TRY, AED)
-- **Notifiche Giornaliere**: Promemoria giornalieri del budget disponibile (solo Android)
+- **Notifiche Giornaliere**: Promemoria giornalieri del budget disponibile (Android, Windows, Linux)
+- **Ricerca e Filtri**: Ricerca avanzata per descrizione, categoria e data
+- **Statistiche**: Grafici a torta e a barre per analizzare le spese
+- **Backup e Ripristino**: Salvataggio e caricamento dati in formato JSON
+- **Suggerimenti Smart**: Analisi intelligente delle spese con consigli personalizzati
 - **Esportazione Excel**: Esporta il riepilogo budget e le spese in formato Excel con formattazione professionale
 - **Cancellazione Rapida**: Elimina tutte le spese con un solo tap
-- **Cross-platform**: Disponibile per Android e Linux Desktop
+- **Cross-platform**: Disponibile per Android, Linux Desktop e Windows
 
 ## 🏗️ Struttura del Progetto
 
@@ -89,10 +93,10 @@ Per modificare l'icona dell'app:
 
 ## 👨‍💻 Autore
 
-**Massimo Lo Sciuto**
+**[losciuto](https://github.com/losciuto/budget-giornaliero)**
 
-Sviluppato con il supporto di Antigravity e Gemini 2.0 Pro
+Sviluppato con il supporto di Antigravity e Gemini 3 Pro
 
 ## 📄 Versione
 
-**2.1.0** (Flutter)
+**2.3.0** (Flutter)
