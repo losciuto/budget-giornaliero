@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'logic.dart';
+import 'app_strings.dart';
 
 class SearchFilterScreen extends StatefulWidget {
   final List<Expense> expenses;
@@ -93,13 +94,13 @@ class _SearchFilterScreenState extends State<SearchFilterScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.languageCode == 'it' ? 'Ricerca e Filtri' : 'Search & Filters'),
+        title: Text(AppStrings.get(context, 'search_title', languageCode: widget.languageCode)),
         backgroundColor: const Color(0xFF2196F3),
         actions: [
           if (_searchQuery.isNotEmpty || _selectedCategoryFilter != null || _dateRange != null)
             IconButton(
               icon: const Icon(Icons.clear_all),
-              tooltip: widget.languageCode == 'it' ? 'Cancella filtri' : 'Clear filters',
+              tooltip: AppStrings.get(context, 'clear_filters_tooltip', languageCode: widget.languageCode),
               onPressed: _clearFilters,
             ),
         ],
@@ -115,7 +116,7 @@ class _SearchFilterScreenState extends State<SearchFilterScreen> {
                 // Campo di ricerca
                 TextField(
                   decoration: InputDecoration(
-                    hintText: widget.languageCode == 'it' ? 'Cerca per descrizione...' : 'Search by description...',
+                    hintText: AppStrings.get(context, 'search_hint', languageCode: widget.languageCode),
                     prefixIcon: const Icon(Icons.search),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -140,7 +141,7 @@ class _SearchFilterScreenState extends State<SearchFilterScreen> {
                       child: DropdownButtonFormField<String>(
                         value: _selectedCategoryFilter,
                         decoration: InputDecoration(
-                          labelText: widget.languageCode == 'it' ? 'Categoria' : 'Category',
+                          labelText: AppStrings.get(context, 'category', languageCode: widget.languageCode),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -151,7 +152,7 @@ class _SearchFilterScreenState extends State<SearchFilterScreen> {
                         items: [
                           DropdownMenuItem<String>(
                             value: null,
-                            child: Text(widget.languageCode == 'it' ? 'Tutte' : 'All'),
+                            child: Text(AppStrings.get(context, 'category_all', languageCode: widget.languageCode)),
                           ),
                           ...ExpenseCategory.defaultCategories.map((cat) {
                             return DropdownMenuItem<String>(
@@ -183,7 +184,7 @@ class _SearchFilterScreenState extends State<SearchFilterScreen> {
                         icon: const Icon(Icons.date_range),
                         label: Text(
                           _dateRange == null
-                              ? (widget.languageCode == 'it' ? 'Periodo' : 'Period')
+                              ? AppStrings.get(context, 'period_button', languageCode: widget.languageCode)
                               : '${dateFormat.format(_dateRange!.start)} - ${dateFormat.format(_dateRange!.end)}',
                           style: const TextStyle(fontSize: 12),
                         ),
@@ -209,15 +210,13 @@ class _SearchFilterScreenState extends State<SearchFilterScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  widget.languageCode == 'it'
-                      ? '${_filteredExpenses.length} spese trovate'
-                      : '${_filteredExpenses.length} expenses found',
+                  AppStrings.get(context, 'expenses_found', languageCode: widget.languageCode)
+                      .replaceAll('{count}', _filteredExpenses.length.toString()),
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  widget.languageCode == 'it'
-                      ? 'Totale: ${widget.currencyFormat.format(totalFiltered)}'
-                      : 'Total: ${widget.currencyFormat.format(totalFiltered)}',
+                  AppStrings.get(context, 'total_label', languageCode: widget.languageCode)
+                      .replaceAll('{amount}', widget.currencyFormat.format(totalFiltered)),
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     color: Colors.redAccent,
@@ -237,9 +236,7 @@ class _SearchFilterScreenState extends State<SearchFilterScreen> {
                         Icon(Icons.search_off, size: 80, color: Colors.grey[400]),
                         const SizedBox(height: 16),
                         Text(
-                          widget.languageCode == 'it'
-                              ? 'Nessuna spesa trovata'
-                              : 'No expenses found',
+                          AppStrings.get(context, 'no_results', languageCode: widget.languageCode),
                           style: TextStyle(fontSize: 18, color: Colors.grey[600]),
                         ),
                       ],

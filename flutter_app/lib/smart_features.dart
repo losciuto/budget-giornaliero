@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'logic.dart';
+import 'app_strings.dart';
 
 class SmartFeatures {
   /// Analizza i pattern di spesa e genera suggerimenti
@@ -23,20 +24,18 @@ class SmartFeatures {
     if (avgDailySpending > dailyBudget * 1.2) {
       suggestions.add(SmartSuggestion(
         type: SuggestionType.warning,
-        title: languageCode == 'it' ? 'Attenzione!' : 'Warning!',
-        message: languageCode == 'it'
-            ? 'Stai spendendo il ${((avgDailySpending / dailyBudget - 1) * 100).toStringAsFixed(0)}% in più del budget giornaliero'
-            : 'You are spending ${((avgDailySpending / dailyBudget - 1) * 100).toStringAsFixed(0)}% more than daily budget',
+        title: AppStrings.getSimple('smart_warning_title', languageCode),
+        message: AppStrings.getSimple('smart_warning_msg', languageCode)
+            .replaceAll('{percent}', ((avgDailySpending / dailyBudget - 1) * 100).toStringAsFixed(0)),
         icon: Icons.warning_amber,
         color: Colors.orange,
       ));
     } else if (avgDailySpending < dailyBudget * 0.8) {
       suggestions.add(SmartSuggestion(
         type: SuggestionType.success,
-        title: languageCode == 'it' ? 'Ottimo lavoro!' : 'Great job!',
-        message: languageCode == 'it'
-            ? 'Stai risparmiando! Spesa media sotto il budget del ${((1 - avgDailySpending / dailyBudget) * 100).toStringAsFixed(0)}%'
-            : 'You are saving! Average spending below budget by ${((1 - avgDailySpending / dailyBudget) * 100).toStringAsFixed(0)}%',
+        title: AppStrings.getSimple('smart_success_title', languageCode),
+        message: AppStrings.getSimple('smart_success_msg', languageCode)
+            .replaceAll('{percent}', ((1 - avgDailySpending / dailyBudget) * 100).toStringAsFixed(0)),
         icon: Icons.trending_down,
         color: Colors.green,
       ));
@@ -51,10 +50,10 @@ class SmartFeatures {
       
       suggestions.add(SmartSuggestion(
         type: SuggestionType.info,
-        title: languageCode == 'it' ? 'Categoria principale' : 'Top Category',
-        message: languageCode == 'it'
-            ? '${topCat.nameIt}: $percentage% delle spese totali'
-            : '${topCat.nameEn}: $percentage% of total expenses',
+        title: AppStrings.getSimple('smart_top_cat_title', languageCode),
+        message: AppStrings.getSimple('smart_top_cat_msg', languageCode)
+            .replaceAll('{category}', topCat.getName(languageCode))
+            .replaceAll('{percent}', percentage),
         icon: topCat.icon,
         color: topCat.color,
       ));
@@ -67,10 +66,9 @@ class SmartFeatures {
         final excess = projectedTotal - totalBudget;
         suggestions.add(SmartSuggestion(
           type: SuggestionType.warning,
-          title: languageCode == 'it' ? 'Previsione Budget' : 'Budget Forecast',
-          message: languageCode == 'it'
-              ? 'Al ritmo attuale, supererai il budget di ${excess.toStringAsFixed(2)}€'
-              : 'At current rate, you will exceed budget by ${excess.toStringAsFixed(2)}€',
+          title: AppStrings.getSimple('smart_forecast_title', languageCode),
+          message: AppStrings.getSimple('smart_forecast_msg', languageCode)
+              .replaceAll('{amount}', excess.toStringAsFixed(2) + '€'),
           icon: Icons.trending_up,
           color: Colors.red,
         ));
@@ -82,10 +80,9 @@ class SmartFeatures {
     if (recentDaysWithoutExpenses >= 3) {
       suggestions.add(SmartSuggestion(
         type: SuggestionType.success,
-        title: languageCode == 'it' ? 'Streak di risparmio!' : 'Saving Streak!',
-        message: languageCode == 'it'
-            ? '$recentDaysWithoutExpenses giorni senza spese!'
-            : '$recentDaysWithoutExpenses days without expenses!',
+        title: AppStrings.getSimple('smart_streak_title', languageCode),
+        message: AppStrings.getSimple('smart_streak_msg', languageCode)
+            .replaceAll('{days}', recentDaysWithoutExpenses.toString()),
         icon: Icons.emoji_events,
         color: Colors.amber,
       ));

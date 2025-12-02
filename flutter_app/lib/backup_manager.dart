@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'logic.dart';
+import 'app_strings.dart';
 
 class BackupManager {
   /// Esporta tutti i dati in formato JSON
@@ -45,7 +46,7 @@ class BackupManager {
       } else {
         // Desktop: chiedi all'utente dove salvare
         final result = await FilePicker.platform.saveFile(
-          dialogTitle: 'Salva Backup',
+          dialogTitle: AppStrings.get(context, 'save_backup_dialog'),
           fileName: fileName,
           type: FileType.custom,
           allowedExtensions: ['json'],
@@ -69,7 +70,7 @@ class BackupManager {
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['json'],
-        dialogTitle: 'Seleziona Backup',
+        dialogTitle: AppStrings.get(context, 'select_backup_dialog'),
       );
 
       if (result != null && result.files.single.path != null) {
@@ -176,18 +177,14 @@ class BackupDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(languageCode == 'it' ? 'Backup e Ripristino' : 'Backup & Restore'),
+      title: Text(AppStrings.getSimple('backup_dialog_title', languageCode)),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           ListTile(
             leading: const Icon(Icons.upload_file, color: Colors.blue),
-            title: Text(languageCode == 'it' ? 'Esporta Backup' : 'Export Backup'),
-            subtitle: Text(
-              languageCode == 'it' 
-                  ? 'Salva tutti i dati in un file' 
-                  : 'Save all data to a file',
-            ),
+            title: Text(AppStrings.getSimple('backup_export', languageCode)),
+            subtitle: Text(AppStrings.getSimple('backup_export_subtitle', languageCode)),
             onTap: () {
               Navigator.pop(context);
               onExport();
@@ -196,12 +193,8 @@ class BackupDialog extends StatelessWidget {
           const Divider(),
           ListTile(
             leading: const Icon(Icons.download, color: Colors.green),
-            title: Text(languageCode == 'it' ? 'Importa Backup' : 'Import Backup'),
-            subtitle: Text(
-              languageCode == 'it' 
-                  ? 'Ripristina dati da un file' 
-                  : 'Restore data from a file',
-            ),
+            title: Text(AppStrings.getSimple('backup_import', languageCode)),
+            subtitle: Text(AppStrings.getSimple('backup_import_subtitle', languageCode)),
             onTap: () {
               Navigator.pop(context);
               onImport();
@@ -211,9 +204,7 @@ class BackupDialog extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              languageCode == 'it'
-                  ? 'Il backup include: spese, budget, impostazioni e preferenze.'
-                  : 'Backup includes: expenses, budget, settings and preferences.',
+              AppStrings.getSimple('backup_info', languageCode),
               style: const TextStyle(fontSize: 12, color: Colors.grey),
               textAlign: TextAlign.center,
             ),
@@ -223,7 +214,7 @@ class BackupDialog extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: Text(languageCode == 'it' ? 'Chiudi' : 'Close'),
+          child: Text(AppStrings.getSimple('close', languageCode)),
         ),
       ],
     );

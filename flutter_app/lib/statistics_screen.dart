@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import 'logic.dart';
+import 'app_strings.dart';
 
 class StatisticsScreen extends StatelessWidget {
   final List<Expense> expenses;
@@ -96,7 +97,7 @@ class StatisticsScreen extends StatelessWidget {
     
     return Scaffold(
       appBar: AppBar(
-        title: Text(languageCode == 'it' ? 'Statistiche' : 'Statistics'),
+        title: Text(AppStrings.get(context, 'statistics', languageCode: languageCode)),
         backgroundColor: const Color(0xFF2196F3),
       ),
       body: expenses.isEmpty
@@ -107,9 +108,7 @@ class StatisticsScreen extends StatelessWidget {
                   Icon(Icons.pie_chart_outline, size: 80, color: Colors.grey[600]),
                   const SizedBox(height: 16),
                   Text(
-                    languageCode == 'it' 
-                        ? 'Nessuna spesa da visualizzare' 
-                        : 'No expenses to display',
+                    AppStrings.get(context, 'no_stats_data', languageCode: languageCode),
                     style: TextStyle(fontSize: 18, color: Colors.grey[600]),
                   ),
                 ],
@@ -132,7 +131,7 @@ class StatisticsScreen extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                languageCode == 'it' ? 'Totale Speso' : 'Total Spent',
+                                AppStrings.get(context, 'spent', languageCode: languageCode),
                                 style: const TextStyle(fontSize: 16, color: Colors.grey),
                               ),
                               const SizedBox(height: 8),
@@ -155,7 +154,7 @@ class StatisticsScreen extends StatelessWidget {
                   
                   // Grafico a Torta
                   Text(
-                    languageCode == 'it' ? 'Spese per Categoria' : 'Expenses by Category',
+                    AppStrings.get(context, 'expenses_by_category', languageCode: languageCode),
                     style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 16),
@@ -219,7 +218,7 @@ class StatisticsScreen extends StatelessWidget {
                   
                   // Grafico a Barre
                   Text(
-                    languageCode == 'it' ? 'Confronto Categorie' : 'Category Comparison',
+                    AppStrings.get(context, 'category_comparison', languageCode: languageCode),
                     style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 16),

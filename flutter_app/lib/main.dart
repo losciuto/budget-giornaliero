@@ -17,6 +17,7 @@ import 'backup_manager.dart';
 import 'search_filter_screen.dart';
 import 'smart_features.dart';
 import 'package:local_notifier/local_notifier.dart';
+import 'app_strings.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -61,251 +62,7 @@ class _RefreshIntent extends Intent {
   const _RefreshIntent();
 }
 
-// Simple Localization
-class AppStrings {
-  static const Map<String, Map<String, String>> _localizedValues = {
-    'it': {
-      'title': 'Budget Giornaliero',
-      'subtitle': 'Gestione spese mensili',
-      'target_date': 'Data Fine Budget',
-      'total_budget': 'Importo Disponibile',
-      'hint_budget': 'Inserisci il tuo budget totale',
-      'today': 'Data di Oggi',
-      'days_remaining': 'Giorni Mancanti',
-      'daily_available': 'Puoi spendere al giorno:',
-      'expired': 'Scaduto',
-      'info': 'Informazioni',
-      'add_expense': 'Aggiungi Spesa',
-      'expenses': 'Spese Recenti',
-      'no_expenses': 'Nessuna spesa registrata',
-      'spent': 'Totale Speso',
-      'remaining': 'Rimanente',
-      'description': 'Descrizione',
-      'amount': 'Importo',
-      'cancel': 'Annulla',
-      'add': 'Aggiungi',
-      'notification_title': 'Budget Giornaliero',
-      'notification_body': 'Hai ancora {amount} disponibili per oggi!',
-      'settings': 'Impostazioni',
-      'enable_notifications': 'Abilita Notifiche Giornaliere',
-      'export_excel': 'Esporta in Excel',
-      'export_success': 'File esportato con successo!',
-      'export_error': 'Errore durante l\'esportazione',
-      'swipe_hint': 'Scorri per eliminare',
-      'clear_all': 'Cancella Tutto',
-      'confirm_clear_all': 'Sei sicuro di voler cancellare tutte le spese?',
-      'yes': 'Sì',
-      'no': 'No',
-      'category': 'Categoria',
-      'statistics': 'Statistiche',
-      'backup': 'Backup',
-      'backup_export': 'Esporta Backup',
-      'backup_import': 'Importa Backup',
-      'backup_success': 'Backup creato con successo!',
-      'backup_error': 'Errore durante il backup',
-      'import_success': 'Dati importati con successo!',
-      'import_error': 'Errore durante l\'importazione',
-      'period': 'Periodo Budget',
-      'period_monthly': 'Mensile',
-      'period_weekly': 'Settimanale',
-      'period_biweekly': 'Bisettimanale',
-      'period_yearly': 'Annuale',
-    },
-    'en': {
-      'title': 'Daily Budget',
-      'subtitle': 'Monthly expense management',
-      'target_date': 'Budget End Date',
-      'total_budget': 'Available Amount',
-      'hint_budget': 'Enter your total budget',
-      'today': 'Today\'s Date',
-      'days_remaining': 'Days Remaining',
-      'daily_available': 'You can spend daily:',
-      'expired': 'Expired',
-      'info': 'Info',
-      'add_expense': 'Add Expense',
-      'expenses': 'Recent Expenses',
-      'no_expenses': 'No expenses recorded',
-      'spent': 'Total Spent',
-      'remaining': 'Remaining',
-      'description': 'Description',
-      'amount': 'Amount',
-      'cancel': 'Cancel',
-      'add': 'Add',
-      'notification_title': 'Daily Budget',
-      'notification_body': 'You still have {amount} available for today!',
-      'settings': 'Settings',
-      'enable_notifications': 'Enable Daily Notifications',
-      'export_excel': 'Export to Excel',
-      'export_success': 'File exported successfully!',
-      'export_error': 'Error during export',
-      'swipe_hint': 'Swipe to delete',
-      'clear_all': 'Clear All',
-      'confirm_clear_all': 'Are you sure you want to delete all expenses?',
-      'yes': 'Yes',
-      'no': 'No',
-      'category': 'Category',
-      'statistics': 'Statistics',
-      'backup': 'Backup',
-      'backup_export': 'Export Backup',
-      'backup_import': 'Import Backup',
-      'backup_success': 'Backup created successfully!',
-      'backup_error': 'Error during backup',
-      'import_success': 'Data imported successfully!',
-      'import_error': 'Error during import',
-      'period': 'Budget Period',
-      'period_monthly': 'Monthly',
-      'period_weekly': 'Weekly',
-      'period_biweekly': 'Bi-weekly',
-      'period_yearly': 'Yearly',
-    },
-    'es': {
-      'title': 'Presupuesto Diario',
-      'subtitle': 'Gestión de gastos mensuales',
-      'target_date': 'Fecha Fin Presupuesto',
-      'total_budget': 'Monto Disponible',
-      'hint_budget': 'Introduce tu presupuesto total',
-      'today': 'Fecha de Hoy',
-      'days_remaining': 'Días Restantes',
-      'daily_available': 'Puedes gastar al día:',
-      'expired': 'Caducado',
-      'info': 'Información',
-      'add_expense': 'Añadir Gasto',
-      'expenses': 'Gastos Recientes',
-      'no_expenses': 'No hay gastos registrados',
-      'spent': 'Total Gastado',
-      'remaining': 'Restante',
-      'description': 'Descripción',
-      'amount': 'Monto',
-      'cancel': 'Cancelar',
-      'add': 'Añadir',
-      'notification_title': 'Presupuesto Diario',
-      'notification_body': '¡Todavía tienes {amount} disponibles para hoy!',
-      'settings': 'Ajustes',
-      'enable_notifications': 'Activar Notificaciones Diarias',
-      'export_excel': 'Exportar a Excel',
-      'export_success': '¡Archivo exportado con éxito!',
-      'export_error': 'Error durante la exportación',
-      'swipe_hint': 'Desliza para eliminar',
-      'clear_all': 'Borrar Todo',
-      'confirm_clear_all': '¿Estás seguro de que quieres borrar todos los gastos?',
-      'yes': 'Sí',
-      'no': 'No',
-      'category': 'Categoría',
-      'statistics': 'Estadísticas',
-      'backup': 'Copia de Seguridad',
-      'backup_export': 'Exportar Copia',
-      'backup_import': 'Importar Copia',
-      'backup_success': '¡Copia creada con éxito!',
-      'backup_error': 'Error durante la copia',
-      'import_success': '¡Datos importados con éxito!',
-      'import_error': 'Error durante la importación',
-      'period': 'Período Presupuesto',
-      'period_monthly': 'Mensual',
-      'period_weekly': 'Semanal',
-      'period_biweekly': 'Quincenal',
-      'period_yearly': 'Anual',
-    },
-    'fr': {
-      'title': 'Budget Quotidien',
-      'subtitle': 'Gestion des dépenses mensuelles',
-      'target_date': 'Date Fin Budget',
-      'total_budget': 'Montant Disponible',
-      'hint_budget': 'Entrez votre budget total',
-      'today': 'Date d\'Aujourd\'hui',
-      'days_remaining': 'Jours Restants',
-      'daily_available': 'Vous pouvez dépenser par jour :',
-      'expired': 'Expiré',
-      'info': 'Infos',
-      'add_expense': 'Ajouter Dépense',
-      'expenses': 'Dépenses Récentes',
-      'no_expenses': 'Aucune dépense enregistrée',
-      'spent': 'Total Dépensé',
-      'remaining': 'Restant',
-      'description': 'Description',
-      'amount': 'Montant',
-      'cancel': 'Annuler',
-      'add': 'Ajouter',
-      'notification_title': 'Budget Quotidien',
-      'notification_body': 'Vous avez encore {amount} disponibles pour aujourd\'hui !',
-      'settings': 'Paramètres',
-      'enable_notifications': 'Activer Notifications Quotidiennes',
-      'export_excel': 'Exporter vers Excel',
-      'export_success': 'Fichier exporté avec succès !',
-      'export_error': 'Erreur lors de l\'exportation',
-      'swipe_hint': 'Glisser pour supprimer',
-      'clear_all': 'Tout Effacer',
-      'confirm_clear_all': 'Êtes-vous sûr de vouloir supprimer toutes les dépenses ?',
-      'yes': 'Oui',
-      'no': 'Non',
-      'category': 'Catégorie',
-      'statistics': 'Statistiques',
-      'backup': 'Sauvegarde',
-      'backup_export': 'Exporter Sauvegarde',
-      'backup_import': 'Importer Sauvegarde',
-      'backup_success': 'Sauvegarde créée avec succès !',
-      'backup_error': 'Erreur lors de la sauvegarde',
-      'import_success': 'Données importées avec succès !',
-      'import_error': 'Erreur lors de l\'importation',
-      'period': 'Période Budget',
-      'period_monthly': 'Mensuel',
-      'period_weekly': 'Hebdomadaire',
-      'period_biweekly': 'Bihebdomadaire',
-      'period_yearly': 'Annuel',
-    },
-    'de': {
-      'title': 'Tagesbudget',
-      'subtitle': 'Monatliche Ausgabenverwaltung',
-      'target_date': 'Budget-Enddatum',
-      'total_budget': 'Verfügbarer Betrag',
-      'hint_budget': 'Geben Sie Ihr Gesamtbudget ein',
-      'today': 'Heutiges Datum',
-      'days_remaining': 'Verbleibende Tage',
-      'daily_available': 'Sie können täglich ausgeben:',
-      'expired': 'Abgelaufen',
-      'info': 'Info',
-      'add_expense': 'Ausgabe Hinzufügen',
-      'expenses': 'Letzte Ausgaben',
-      'no_expenses': 'Keine Ausgaben erfasst',
-      'spent': 'Gesamt Ausgegeben',
-      'remaining': 'Verbleibend',
-      'description': 'Beschreibung',
-      'amount': 'Betrag',
-      'cancel': 'Abbrechen',
-      'add': 'Hinzufügen',
-      'notification_title': 'Tagesbudget',
-      'notification_body': 'Sie haben noch {amount} für heute verfügbar!',
-      'settings': 'Einstellungen',
-      'enable_notifications': 'Tägliche Benachrichtigungen aktivieren',
-      'export_excel': 'Nach Excel exportieren',
-      'export_success': 'Datei erfolgreich exportiert!',
-      'export_error': 'Fehler beim Exportieren',
-      'swipe_hint': 'Zum Löschen wischen',
-      'clear_all': 'Alles Löschen',
-      'confirm_clear_all': 'Sind Sie sicher, dass Sie alle Ausgaben löschen möchten?',
-      'yes': 'Ja',
-      'no': 'Nein',
-      'category': 'Kategorie',
-      'statistics': 'Statistiken',
-      'backup': 'Sicherung',
-      'backup_export': 'Sicherung Exportieren',
-      'backup_import': 'Sicherung Importieren',
-      'backup_success': 'Sicherung erfolgreich erstellt!',
-      'backup_error': 'Fehler bei der Sicherung',
-      'import_success': 'Daten erfolgreich importiert!',
-      'import_error': 'Fehler beim Importieren',
-      'period': 'Budgetzeitraum',
-      'period_monthly': 'Monatlich',
-      'period_weekly': 'Wöchentlich',
-      'period_biweekly': 'Zweiwöchentlich',
-      'period_yearly': 'Jährlich',
-    },
-  };
-
-  static String get(BuildContext context, String key, {String? languageCode}) {
-    final locale = languageCode ?? Localizations.localeOf(context).languageCode;
-    return _localizedValues[locale]?[key] ?? _localizedValues['it']![key]!;
-  }
-}
+// AppStrings moved to app_strings.dart
 
 class BudgetApp extends StatelessWidget {
   const BudgetApp({super.key});
@@ -953,7 +710,7 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
                 children: [
                   // Language Selection
                   ListTile(
-                    title: const Text("Lingua / Language"),
+                    title: Text(AppStrings.get(context, 'language_label', languageCode: _selectedLanguage)),
                     trailing: DropdownButton<String>(
                       value: _selectedLanguage,
                       onChanged: (String? newValue) {
@@ -977,7 +734,7 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
                   
                   // Currency Selection
                   ListTile(
-                    title: const Text("Valuta / Currency"),
+                    title: Text(AppStrings.get(context, 'currency_label', languageCode: _selectedLanguage)),
                     trailing: DropdownButton<String>(
                       value: _selectedCurrency,
                       onChanged: (String? newValue) {
@@ -1007,9 +764,6 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
                       onChanged: (BudgetPeriod? newValue) {
                         if (newValue != null) {
                           setState(() {
-                            _selectedPeriod = newValue;
-                          });
-                          this.setState(() {
                             _selectedPeriod = newValue;
                             // Ricalcola la data target in base al nuovo periodo
                             _targetDate = BudgetLogic.getNextTargetDate(DateTime.now(), _selectedPeriod);
@@ -1063,11 +817,11 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
                     ),
                   if (Platform.isAndroid || Platform.isIOS || Platform.isWindows || Platform.isLinux)
                     const Divider(),
-                  const Text(
-                    "Autore: Massimo Lo Sciuto\n"
-                    "Supporto: Antigravity\n"
-                    "Sviluppo: Gemini 3 Pro\n"
-                    "Versione: 2.2.0 (Flutter)",
+                  Text(
+                    "${AppStrings.get(context, 'author', languageCode: _selectedLanguage)}: Massimo Lo Sciuto\n"
+                    "${AppStrings.get(context, 'support', languageCode: _selectedLanguage)}: Antigravity\n"
+                    "${AppStrings.get(context, 'development', languageCode: _selectedLanguage)}: Gemini 3 Pro\n"
+                    "${AppStrings.get(context, 'version', languageCode: _selectedLanguage)}: 2.3.0 (Flutter)",
                   ),
                   const SizedBox(height: 12),
                   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS)
@@ -1343,7 +1097,7 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
                     children: [
                       const SizedBox(height: 16),
                       Text(
-                        _selectedLanguage == 'it' ? '💡 Suggerimenti Smart' : '💡 Smart Suggestions',
+                        AppStrings.get(context, 'smart_suggestions_title', languageCode: _selectedLanguage),
                         style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 8),
