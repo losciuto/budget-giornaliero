@@ -79,6 +79,6 @@ La versione originale scritta in Python e Kivy è ancora disponibile nella carte
 Per dettagli sulla vecchia compilazione Android con Buildozer, vedi i file nella cartella `native_app/`.
 
 ## Crediti
-*   **Autore**: Massimo Lo Sciuto
+*   **Autore**: [losciuto](https://github.com/losciuto/budget-giornaliero)
 *   **Supporto**: Antigravity
 *   **Sviluppo**: Gemini 3 Pro

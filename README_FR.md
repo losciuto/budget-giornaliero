@@ -58,5 +58,5 @@ Téléchargez et installez le fichier `.apk` depuis le dossier `build/app/output
 Ce projet est sous licence MIT.
 
 ---
-**Auteur**: Massimo Lo Sciuto
+**Auteur**: [losciuto](https://github.com/losciuto/budget-giornaliero)  
 **Développé avec**: Antigravity (Gemini 3 Pro)

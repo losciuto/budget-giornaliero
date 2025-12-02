@@ -54,6 +54,6 @@ The original version written in Python and Kivy is still available in the `nativ
 For details on the old Android build with Buildozer, see the files in the `native_app/` folder.
 
 ## Credits
-*   **Author**: Massimo Lo Sciuto
+*   **Author**: [losciuto](https://github.com/losciuto/budget-giornaliero)
 *   **Support**: Antigravity
 *   **Development**: Gemini 3 Pro

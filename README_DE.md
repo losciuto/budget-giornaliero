@@ -58,5 +58,5 @@ Laden Sie die `.apk`-Datei aus dem Ordner `build/app/outputs/flutter-apk/` herun
 Dieses Projekt steht unter der MIT-Lizenz.
 
 ---
-**Autor**: Massimo Lo Sciuto
+**Autor**: [losciuto](https://github.com/losciuto/budget-giornaliero)  
 **Entwickelt mit**: Antigravity (Gemini 3 Pro)

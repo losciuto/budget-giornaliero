@@ -152,7 +152,7 @@ Per maggiori dettagli consulta:
 ───────────────────────────────────────────────────────────────
 
 Autore:    Massimo Lo Sciuto
-Versione:  2.1.0 (Flutter)
+Versione:  2.3.0 (Flutter)
 Supporto:  Antigravity (Gemini 3 Pro)
 Data:      Dicembre 2025
 
