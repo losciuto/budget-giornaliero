@@ -82,6 +82,7 @@ class AppStrings {
       'smart_forecast_msg': 'Al ritmo attuale, supererai il budget di {amount}',
       'smart_streak_title': 'Streak di risparmio!',
       'smart_streak_msg': '{days} giorni senza spese!',
+      'no_suggestions': 'Nessun suggerimento al momento',
       
       // Backup Manager
       'backup_dialog_title': 'Backup e Ripristino',
@@ -172,6 +173,7 @@ class AppStrings {
       'smart_forecast_msg': 'At current rate, you will exceed budget by {amount}',
       'smart_streak_title': 'Saving Streak!',
       'smart_streak_msg': '{days} days without expenses!',
+      'no_suggestions': 'No suggestions at the moment',
       
       // Backup Manager
       'backup_dialog_title': 'Backup & Restore',
@@ -262,6 +264,7 @@ class AppStrings {
       'smart_forecast_msg': 'Al ritmo actual, superarás el presupuesto en {amount}',
       'smart_streak_title': '¡Racha de Ahorro!',
       'smart_streak_msg': '¡{days} días sin gastos!',
+      'no_suggestions': 'No hay sugerencias por el momento',
       
       // Backup Manager
       'backup_dialog_title': 'Copia de Seguridad y Restauración',
@@ -352,6 +355,7 @@ class AppStrings {
       'smart_forecast_msg': 'Au rythme actuel, vous dépasserez le budget de {amount}',
       'smart_streak_title': 'Série d\'Économie !',
       'smart_streak_msg': '{days} jours sans dépenses !',
+      'no_suggestions': 'Aucune suggestion pour le moment',
       
       // Backup Manager
       'backup_dialog_title': 'Sauvegarde et Restauration',
@@ -442,6 +446,7 @@ class AppStrings {
       'smart_forecast_msg': 'Bei aktuellem Tempo werden Sie das Budget um {amount} überschreiten',
       'smart_streak_title': 'Sparsträhne!',
       'smart_streak_msg': '{days} Tage ohne Ausgaben!',
+      'no_suggestions': 'Keine Vorschläge im Moment',
       
       // Backup Manager
       'backup_dialog_title': 'Sicherung und Wiederherstellung',

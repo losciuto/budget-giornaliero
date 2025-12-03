@@ -162,25 +162,65 @@ class SmartSuggestionsWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     if (suggestions.isEmpty) return const SizedBox.shrink();
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: suggestions.map((suggestion) {
-        return Card(
-          margin: const EdgeInsets.only(bottom: 8),
-          color: suggestion.color.withOpacity(0.1),
-          child: ListTile(
-            leading: Icon(suggestion.icon, color: suggestion.color, size: 32),
-            title: Text(
-              suggestion.title,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: suggestion.color,
+    return SizedBox(
+      height: 65,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: suggestions.length,
+        itemBuilder: (context, index) {
+          final suggestion = suggestions[index];
+          return Container(
+            width: 230,
+            margin: const EdgeInsets.only(right: 8),
+            child: Card(
+              elevation: 2,
+              color: suggestion.color.withOpacity(0.08),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+                side: BorderSide(color: suggestion.color.withOpacity(0.3), width: 1),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(suggestion.icon, color: suggestion.color, size: 18),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            suggestion.title,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 10.5,
+                              color: suggestion.color,
+                              height: 1.1,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 2),
+                          Expanded(
+                            child: Text(
+                              suggestion.message,
+                              style: const TextStyle(fontSize: 9.5, height: 1.1),
+                              maxLines: 3,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-            subtitle: Text(suggestion.message),
-          ),
-        );
-      }).toList(),
+          );
+        },
+      ),
     );
   }
 }

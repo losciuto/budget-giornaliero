@@ -607,6 +607,66 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
     );
   }
 
+  void _showSmartSuggestions() {
+    final suggestions = SmartFeatures.generateSuggestions(
+      expenses: _expenses,
+      totalBudget: double.tryParse(_amountController.text.replaceAll(',', '.')) ?? 0.0,
+      dailyBudget: _dailyBudget,
+      daysRemaining: int.tryParse(_daysRemaining) ?? 0,
+      languageCode: _selectedLanguage,
+    );
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Row(
+          children: [
+            const Icon(Icons.lightbulb, color: Colors.amber),
+            const SizedBox(width: 10),
+            Text(AppStrings.get(context, 'smart_suggestions_title', languageCode: _selectedLanguage)),
+          ],
+        ),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: suggestions.isEmpty
+              ? Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Text(
+                    AppStrings.get(context, 'no_suggestions', languageCode: _selectedLanguage), // Assicurati che questa stringa esista o usa un fallback
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: Colors.grey),
+                  ),
+                )
+              : ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: suggestions.length,
+                  itemBuilder: (context, index) {
+                    final suggestion = suggestions[index];
+                    return Card(
+                      margin: const EdgeInsets.only(bottom: 10),
+                      color: suggestion.color.withOpacity(0.1),
+                      child: ListTile(
+                        leading: Icon(suggestion.icon, color: suggestion.color, size: 32),
+                        title: Text(
+                          suggestion.title,
+                          style: TextStyle(fontWeight: FontWeight.bold, color: suggestion.color),
+                        ),
+                        subtitle: Text(suggestion.message),
+                      ),
+                    );
+                  },
+                ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(AppStrings.get(context, 'close', languageCode: _selectedLanguage)),
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<void> _exportBackup() async {
     try {
       final data = await BackupManager.exportData(
@@ -914,10 +974,15 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
         child: Focus(
           autofocus: true,
           child: Scaffold(
-      body: Center(
+            floatingActionButton: FloatingActionButton(
+              onPressed: _showAddExpenseDialog,
+              tooltip: AppStrings.get(context, 'add_expense', languageCode: _selectedLanguage),
+              child: const Icon(Icons.add),
+            ),
+            body: Center(
         child: Container(
           constraints: const BoxConstraints(maxWidth: 500),
-          padding: const EdgeInsets.all(20.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
               // Header
@@ -949,6 +1014,11 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
                     tooltip: _selectedLanguage == 'it' ? 'Ricerca' : 'Search',
                   ),
                   IconButton(
+                    icon: const Icon(Icons.lightbulb, color: Colors.amber),
+                    onPressed: _showSmartSuggestions,
+                    tooltip: AppStrings.get(context, 'smart_suggestions_title', languageCode: _selectedLanguage),
+                  ),
+                  IconButton(
                     icon: const Icon(Icons.bar_chart, color: Colors.purple),
                     onPressed: _showStatistics,
                     tooltip: AppStrings.get(context, 'statistics', languageCode: _selectedLanguage),
@@ -969,14 +1039,14 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 12),
 
               // Main Card
               Card(
                 elevation: 4,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                 child: Padding(
-                  padding: const EdgeInsets.all(20.0),
+                  padding: const EdgeInsets.all(16.0),
                   child: Column(
                     children: [
                       // Date Picker
@@ -1079,34 +1149,7 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
                 ),
               ),
               
-              // Smart Suggestions
-              Builder(
-                builder: (context) {
-                  final suggestions = SmartFeatures.generateSuggestions(
-                    expenses: _expenses,
-                    totalBudget: double.tryParse(_amountController.text.replaceAll(',', '.')) ?? 0.0,
-                    dailyBudget: _dailyBudget,
-                    daysRemaining: int.tryParse(_daysRemaining) ?? 0,
-                    languageCode: _selectedLanguage,
-                  );
-                  
-                  if (suggestions.isEmpty) return const SizedBox(height: 20);
-                  
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 16),
-                      Text(
-                        AppStrings.get(context, 'smart_suggestions_title', languageCode: _selectedLanguage),
-                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 8),
-                      SmartSuggestionsWidget(suggestions: suggestions),
-                      const SizedBox(height: 20),
-                    ],
-                  );
-                },
-              ),
+              // Smart Suggestions removed from here and moved to header icon dialog
               
               // Expenses Header
               Row(
@@ -1114,32 +1157,24 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
                 children: [
                   Text(
                     AppStrings.get(context, 'expenses', languageCode: _selectedLanguage),
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                   ),
                   if (_expenses.isNotEmpty)
                     IconButton(
-                      icon: const Icon(Icons.delete_sweep, color: Colors.redAccent),
+                      icon: const Icon(Icons.delete_sweep, color: Colors.redAccent, size: 20),
                       tooltip: AppStrings.get(context, 'clear_all', languageCode: _selectedLanguage),
                       onPressed: _confirmClearAll,
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
                     ),
-                  const Spacer(),
-                  ElevatedButton.icon(
-                    onPressed: _showAddExpenseDialog,
-                    icon: const Icon(Icons.add),
-                    label: Text(AppStrings.get(context, 'add_expense', languageCode: _selectedLanguage)),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      foregroundColor: Colors.white,
-                    ),
-                  ),
                 ],
               ),
-              const SizedBox(height: 5),
+              const SizedBox(height: 2),
               Text(
                 AppStrings.get(context, 'swipe_hint', languageCode: _selectedLanguage),
-                style: const TextStyle(fontSize: 12, color: Colors.grey, fontStyle: FontStyle.italic),
+                style: const TextStyle(fontSize: 10, color: Colors.grey, fontStyle: FontStyle.italic),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 4),
 
               // Expenses List
               Expanded(
@@ -1168,46 +1203,59 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
                             },
                             background: Container(color: Colors.red, alignment: Alignment.centerRight, padding: const EdgeInsets.only(right: 20), child: const Icon(Icons.delete, color: Colors.white)),
                             child: Card(
-                              margin: const EdgeInsets.symmetric(vertical: 4),
+                              margin: const EdgeInsets.symmetric(vertical: 1),
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                side: BorderSide(color: Colors.grey.withOpacity(0.2)),
+                              ),
                               child: ListTile(
+                                dense: true,
+                                visualDensity: const VisualDensity(vertical: -4),
+                                contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                minLeadingWidth: 0,
                                 leading: CircleAvatar(
+                                  radius: 14,
                                   backgroundColor: expense.category.color.withOpacity(0.2),
                                   child: Icon(
                                     expense.category.icon,
                                     color: expense.category.color,
-                                    size: 24,
+                                    size: 16,
                                   ),
                                 ),
                                 title: Row(
                                   children: [
-                                    Expanded(child: Text(expense.description)),
+                                    Expanded(child: Text(expense.description, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500))),
                                     Text(
                                       expense.category.getName(_selectedLanguage),
                                       style: TextStyle(
-                                        fontSize: 12,
+                                        fontSize: 9,
                                         color: expense.category.color,
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ),
                                   ],
                                 ),
-                                subtitle: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                subtitle: Row(
                                   children: [
-                                    Text(_dateFormat.format(expense.date)),
+                                    Text(_dateFormat.format(expense.date), style: const TextStyle(fontSize: 10)),
+                                    const Spacer(),
                                     Text(
                                       '${AppStrings.get(context, 'remaining', languageCode: _selectedLanguage)}: ${_currencyFormat.format(remainingAfterExpense)}',
                                       style: TextStyle(
-                                        fontSize: 12,
-                                        color: remainingAfterExpense < 0 ? Colors.red : Colors.greenAccent,
-                                        fontWeight: FontWeight.bold,
+                                        fontSize: 9,
+                                        color: remainingAfterExpense >= 0 ? Colors.green : Colors.red,
                                       ),
                                     ),
                                   ],
                                 ),
                                 trailing: Text(
-                                  "- ${_currencyFormat.format(expense.amount)}",
-                                  style: const TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold),
+                                  _currencyFormat.format(expense.amount),
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12,
+                                    color: Colors.redAccent,
+                                  ),
                                 ),
                               ),
                             ),
