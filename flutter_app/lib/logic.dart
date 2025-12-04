@@ -128,12 +128,7 @@ enum BudgetPeriod {
 }
 
 class BudgetLogic {
-  /// Calcola i giorni mancanti alla data target.
-  static int calculateDays(DateTime currentDate, {int targetDay = 27}) {
-    // La logica qui è generica: calcola la differenza tra due date
-    // La data target deve essere passata correttamente dall'esterno
-    return 0; // Questo metodo è deprecato in favore del calcolo diretto in main, ma lo manteniamo per compatibilità se serve
-  }
+
   
   static int getDaysRemaining(DateTime now, DateTime targetDate) {
     final todayMidnight = DateTime(now.year, now.month, now.day);

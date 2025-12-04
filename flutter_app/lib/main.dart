@@ -185,7 +185,7 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
     // Desktop initialization is handled in main()
   }
 
-  Future<void> _scheduleNotification() async {
+  Future<void> _updateNotificationSchedule() async {
     if (!_notificationsEnabled) {
       if (Platform.isAndroid) {
         await _notificationsPlugin.cancelAll();
@@ -193,8 +193,39 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
       return;
     }
 
-    // Windows & Linux: Show immediate notification (since scheduling requires background service)
-    if (Platform.isWindows || Platform.isLinux) {
+    // Android: Schedule daily notification (updates the content of the scheduled job)
+    if (Platform.isAndroid) {
+      await _notificationsPlugin.zonedSchedule(
+        0,
+        AppStrings.get(context, 'notification_title', languageCode: _selectedLanguage),
+        AppStrings.get(context, 'notification_body', languageCode: _selectedLanguage)
+            .replaceAll('{amount}', _currencyFormat.format(_calculatedDaily)),
+        _nextInstanceOf9AM(),
+        const NotificationDetails(
+          android: AndroidNotificationDetails(
+            'daily_budget_channel',
+            'Daily Budget Notifications',
+            channelDescription: 'Daily reminder of available budget',
+            importance: Importance.max,
+            priority: Priority.high,
+          ),
+        ),
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        matchDateTimeComponents: DateTimeComponents.time,
+      );
+    }
+  }
+
+  Future<void> _checkAndShowDesktopNotification() async {
+    if (!_notificationsEnabled) return;
+    if (!(Platform.isWindows || Platform.isLinux || Platform.isMacOS)) return;
+
+    final prefs = await SharedPreferences.getInstance();
+    final lastShownStr = prefs.getString('last_notification_date');
+    final todayStr = DateFormat('yyyy-MM-dd').format(DateTime.now());
+
+    if (lastShownStr != todayStr) {
+      // Show notification
       final notification = LocalNotification(
         identifier: 'daily_budget_reminder',
         title: AppStrings.get(context, 'notification_title', languageCode: _selectedLanguage),
@@ -203,30 +234,9 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
       );
       
       notification.show();
-      return;
-    }
-
-    // Android: Schedule daily notification
-    if (Platform.isAndroid) {
-
-    await _notificationsPlugin.zonedSchedule(
-      0,
-      AppStrings.get(context, 'notification_title', languageCode: _selectedLanguage),
-      AppStrings.get(context, 'notification_body', languageCode: _selectedLanguage).replaceAll('{amount}', _currencyFormat.format(_calculatedDaily)),
-      _nextInstanceOf9AM(),
-      const NotificationDetails(
-        android: AndroidNotificationDetails(
-          'daily_budget_channel',
-          'Daily Budget Notifications',
-          channelDescription: 'Daily reminder of available budget',
-          importance: Importance.max,
-          priority: Priority.high,
-        ),
-      ),
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
-      matchDateTimeComponents: DateTimeComponents.time,
-    );
+      
+      // Save today as last shown
+      await prefs.setString('last_notification_date', todayStr);
     }
   }
 
@@ -276,6 +286,9 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
     });
     _updateFormatters();
     _updateCalculations();
+    
+    // Check for desktop notification on startup
+    _checkAndShowDesktopNotification();
   }
 
   Future<void> _saveData() async {
@@ -287,7 +300,7 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
     await prefs.setString('language', _selectedLanguage);
     await prefs.setString('currency', _selectedCurrency);
     await prefs.setString('budget_period', _selectedPeriod.toString().split('.').last);
-    _scheduleNotification();
+    _updateNotificationSchedule();
   }
 
   void _updateCalculations() {
@@ -985,9 +998,9 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              // Header
+              // Header Moderno
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Expanded(
                     child: Column(
@@ -995,47 +1008,86 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
                       children: [
                         Text(
                           AppStrings.get(context, 'title', languageCode: _selectedLanguage),
-                          style: const TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.blue,
+                          style: GoogleFonts.outfit(
+                            fontSize: 28,
+                            fontWeight: FontWeight.w700,
+                            color: Theme.of(context).colorScheme.primary,
+                            height: 1.2,
                           ),
                         ),
                         Text(
                           AppStrings.get(context, 'subtitle', languageCode: _selectedLanguage),
-                          style: const TextStyle(color: Colors.grey),
+                          style: GoogleFonts.inter(
+                            fontSize: 14,
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            height: 1.2,
+                          ),
                         ),
                       ],
                     ),
                   ),
+                  // Azioni Principali
                   IconButton(
-                    icon: const Icon(Icons.search, color: Colors.teal),
-                    onPressed: _showSearchFilter,
+                    icon: const Icon(Icons.search),
                     tooltip: _selectedLanguage == 'it' ? 'Ricerca' : 'Search',
+                    onPressed: _showSearchFilter,
                   ),
                   IconButton(
-                    icon: const Icon(Icons.lightbulb, color: Colors.amber),
-                    onPressed: _showSmartSuggestions,
+                    icon: const Icon(Icons.lightbulb_outline),
                     tooltip: AppStrings.get(context, 'smart_suggestions_title', languageCode: _selectedLanguage),
+                    onPressed: _showSmartSuggestions,
+                    color: Colors.amber,
                   ),
                   IconButton(
-                    icon: const Icon(Icons.bar_chart, color: Colors.purple),
-                    onPressed: _showStatistics,
+                    icon: const Icon(Icons.bar_chart),
                     tooltip: AppStrings.get(context, 'statistics', languageCode: _selectedLanguage),
+                    onPressed: _showStatistics,
+                    color: Colors.purpleAccent,
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.backup, color: Colors.orange),
-                    onPressed: _showBackupDialog,
-                    tooltip: AppStrings.get(context, 'backup', languageCode: _selectedLanguage),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.file_download, color: Colors.green),
-                    onPressed: _exportToExcel,
-                    tooltip: AppStrings.get(context, 'export_excel', languageCode: _selectedLanguage),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.settings, color: Colors.blue),
-                    onPressed: _showInfoDialog,
+                  // Menu Altro
+                  PopupMenuButton<String>(
+                    icon: const Icon(Icons.more_vert),
+                    tooltip: 'Menu',
+                    onSelected: (value) {
+                      switch (value) {
+                        case 'backup':
+                          _showBackupDialog();
+                          break;
+                        case 'export':
+                          _exportToExcel();
+                          break;
+                        case 'settings':
+                          _showInfoDialog();
+                          break;
+                      }
+                    },
+                    itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                      PopupMenuItem<String>(
+                        value: 'backup',
+                        child: ListTile(
+                          leading: const Icon(Icons.backup, color: Colors.orange),
+                          title: Text(AppStrings.get(context, 'backup', languageCode: _selectedLanguage)),
+                          contentPadding: EdgeInsets.zero,
+                        ),
+                      ),
+                      PopupMenuItem<String>(
+                        value: 'export',
+                        child: ListTile(
+                          leading: const Icon(Icons.file_download, color: Colors.green),
+                          title: Text(AppStrings.get(context, 'export_excel', languageCode: _selectedLanguage)),
+                          contentPadding: EdgeInsets.zero,
+                        ),
+                      ),
+                      const PopupMenuDivider(),
+                      PopupMenuItem<String>(
+                        value: 'settings',
+                        child: ListTile(
+                          leading: const Icon(Icons.settings, color: Colors.blue),
+                          title: Text(AppStrings.get(context, 'settings', languageCode: _selectedLanguage)),
+                          contentPadding: EdgeInsets.zero,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
