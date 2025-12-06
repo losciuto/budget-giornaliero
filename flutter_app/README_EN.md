@@ -99,4 +99,4 @@ Developed with support from Antigravity and Gemini 3 Pro
 
 ## 📄 Version
 
-**2.3.0** (Flutter)
+**2.4.0** (Flutter)

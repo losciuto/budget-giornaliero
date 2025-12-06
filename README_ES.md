@@ -2,7 +2,7 @@
 
 Una aplicación Flutter simple y potente para gestionar tu presupuesto mensual y controlar los gastos diarios.
 
-![Versión](https://img.shields.io/badge/version-2.3.0-blue.svg)
+![Versión](https://img.shields.io/badge/version-2.4.0-blue.svg)
 ![Flutter](https://img.shields.io/badge/Flutter-3.0%2B-02569B.svg)
 ![Plataforma](https://img.shields.io/badge/platform-Android%20%7C%20Linux%20%7C%20Windows-lightgrey.svg)
 

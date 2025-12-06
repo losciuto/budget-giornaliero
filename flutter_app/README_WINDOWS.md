@@ -163,7 +163,7 @@ L'applicazione è stata ottimizzata per Windows:
 
 ## Note sulla Versione
 
-Versione: 2.3.0 (Flutter)
+Versione: 2.4.0 (Flutter)
 - Supporto completo per Windows 10/11
 - Interfaccia ottimizzata per desktop
 - Notifiche locali tramite local_notifier

@@ -65,6 +65,13 @@ class ExpenseCategory {
       color: Color(0xFFFFA07A),
     ),
     ExpenseCategory(
+      id: 'appliances',
+      nameIt: 'Elettrodomestici',
+      nameEn: 'Appliances',
+      icon: Icons.kitchen,
+      color: Color(0xFFCDDC39), // Lime-ish or Steel Blue
+    ),
+    ExpenseCategory(
       id: 'other',
       nameIt: 'Altro',
       nameEn: 'Other',

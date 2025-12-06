@@ -92,6 +92,14 @@ class AppStrings {
       'close': 'Chiudi',
       'save_backup_dialog': 'Salva Backup',
       'select_backup_dialog': 'Seleziona Backup',
+      
+      // Receipt Scanner
+      'scan_receipt': 'Scansiona scontrino',
+      'camera': 'Fotocamera',
+      'gallery': 'Galleria',
+      'amount_found': 'Importo rilevato: {amount}',
+      'no_amount_found': 'Nessun importo rilevato',
+      'scan_tooltip': 'Scansiona importo da immagine',
     },
     'en': {
       'title': 'Daily Budget',
@@ -183,6 +191,14 @@ class AppStrings {
       'close': 'Close',
       'save_backup_dialog': 'Save Backup',
       'select_backup_dialog': 'Select Backup',
+      
+      // Receipt Scanner
+      'scan_receipt': 'Scan Receipt',
+      'camera': 'Camera',
+      'gallery': 'Gallery',
+      'amount_found': 'Amount found: {amount}',
+      'no_amount_found': 'No amount found',
+      'scan_tooltip': 'Scan amount from image',
     },
     'es': {
       'title': 'Presupuesto Diario',
@@ -274,6 +290,14 @@ class AppStrings {
       'close': 'Cerrar',
       'save_backup_dialog': 'Guardar Copia',
       'select_backup_dialog': 'Seleccionar Copia',
+      
+      // Receipt Scanner
+      'scan_receipt': 'Escanear recibo',
+      'camera': 'Cámara',
+      'gallery': 'Galería',
+      'amount_found': 'Monto encontrado: {amount}',
+      'no_amount_found': 'Ningún monto encontrado',
+      'scan_tooltip': 'Escanear monto de imagen',
     },
     'fr': {
       'title': 'Budget Quotidien',
@@ -365,6 +389,14 @@ class AppStrings {
       'close': 'Fermer',
       'save_backup_dialog': 'Enregistrer Sauvegarde',
       'select_backup_dialog': 'Sélectionner Sauvegarde',
+      
+      // Receipt Scanner
+      'scan_receipt': 'Scanner le reçu',
+      'camera': 'Caméra',
+      'gallery': 'Galerie',
+      'amount_found': 'Montant trouvé : {amount}',
+      'no_amount_found': 'Aucun montant trouvé',
+      'scan_tooltip': 'Scanner montant depuis l\'image',
     },
     'de': {
       'title': 'Tagesbudget',
@@ -456,6 +488,14 @@ class AppStrings {
       'close': 'Schließen',
       'save_backup_dialog': 'Sicherung speichern',
       'select_backup_dialog': 'Sicherung auswählen',
+      
+      // Receipt Scanner
+      'scan_receipt': 'Beleg scannen',
+      'camera': 'Kamera',
+      'gallery': 'Galerie',
+      'amount_found': 'Betrag gefunden: {amount}',
+      'no_amount_found': 'Kein Betrag gefunden',
+      'scan_tooltip': 'Betrag aus Bild scannen',
     },
   };
 

@@ -155,7 +155,7 @@ Per maggiori dettagli consulta:
 ───────────────────────────────────────────────────────────────
 
 Autore:    losciuto (https://github.com/losciuto/budget-giornaliero)
-Versione:  2.3.0 (Flutter)
+Versione:  2.4.0 (Flutter)
 Supporto:  Antigravity (Gemini 3 Pro)
 Data:      Dicembre 2025
 

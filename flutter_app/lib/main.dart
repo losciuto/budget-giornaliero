@@ -17,7 +17,9 @@ import 'backup_manager.dart';
 import 'search_filter_screen.dart';
 import 'smart_features.dart';
 import 'package:local_notifier/local_notifier.dart';
+import 'package:image_picker/image_picker.dart';
 import 'app_strings.dart';
+import 'receipt_scanner.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -339,6 +341,58 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
     }
   }
 
+  Future<void> _handleReceiptScan(TextEditingController controller) async {
+    if (!Platform.isAndroid && !Platform.isIOS) return;
+
+    final source = await showModalBottomSheet<ImageSource>(
+      context: context,
+      builder: (context) => SafeArea(
+        child: Wrap(
+          children: [
+            ListTile(
+              leading: const Icon(Icons.camera_alt),
+              title: Text(AppStrings.get(context, 'camera', languageCode: _selectedLanguage)),
+              onTap: () => Navigator.pop(context, ImageSource.camera),
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library),
+              title: Text(AppStrings.get(context, 'gallery', languageCode: _selectedLanguage)),
+              onTap: () => Navigator.pop(context, ImageSource.gallery),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    if (source != null) {
+      if (!mounted) return;
+      
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('${AppStrings.get(context, 'scan_tooltip', languageCode: _selectedLanguage)}...'), 
+        duration: const Duration(seconds: 1)
+      ));
+      
+      final amount = await ReceiptScanner.scanReceipt(source);
+      
+      if (!mounted) return;
+      if (amount != null) {
+        String formatted = amount.toStringAsFixed(2);
+        controller.text = formatted;
+        
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(AppStrings.get(context, 'amount_found', languageCode: _selectedLanguage)
+              .replaceAll('{amount}', formatted)),
+          backgroundColor: Colors.green,
+        ));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(AppStrings.get(context, 'no_amount_found', languageCode: _selectedLanguage)),
+          backgroundColor: Colors.orange,
+        ));
+      }
+    }
+  }
+
   void _showAddExpenseDialog() {
     final descController = TextEditingController();
     final amountController = TextEditingController();
@@ -364,6 +418,13 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
                 controller: amountController,
                 decoration: InputDecoration(
                   labelText: AppStrings.get(context, 'amount', languageCode: _selectedLanguage),
+                  suffixIcon: (Platform.isAndroid || Platform.isIOS)
+                      ? IconButton(
+                          icon: const Icon(Icons.camera_alt),
+                          tooltip: AppStrings.get(context, 'scan_tooltip', languageCode: _selectedLanguage),
+                          onPressed: () => _handleReceiptScan(amountController),
+                        )
+                      : null,
                 ),
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
               ),
@@ -894,7 +955,7 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
                     "${AppStrings.get(context, 'author', languageCode: _selectedLanguage)}: Massimo Lo Sciuto\n"
                     "${AppStrings.get(context, 'support', languageCode: _selectedLanguage)}: Antigravity\n"
                     "${AppStrings.get(context, 'development', languageCode: _selectedLanguage)}: Gemini 3 Pro\n"
-                    "${AppStrings.get(context, 'version', languageCode: _selectedLanguage)}: 2.3.0 (Flutter)",
+                    "${AppStrings.get(context, 'version', languageCode: _selectedLanguage)}: 2.4.0 (Flutter)",
                   ),
                   const SizedBox(height: 12),
                   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS)
