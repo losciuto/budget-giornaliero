@@ -163,11 +163,13 @@ L'applicazione è stata ottimizzata per Windows:
 
 ## Note sulla Versione
 
-Versione: 2.4.0 (Flutter)
+Versione: 2.5.0 (Flutter) - Dicembre 2025
+- **Refactoring architetturale**: Codice più modulare e manutenibile
 - Supporto completo per Windows 10/11
 - Interfaccia ottimizzata per desktop
 - Notifiche locali tramite local_notifier
 - Tutte le funzionalità avanzate disponibili
+- Vedi [CHANGELOG.md](CHANGELOG.md) per dettagli completi
 
 ## Supporto
 

@@ -1,25 +1,21 @@
-import 'dart:convert';
-import 'dart:io' show Platform, File;
+import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
-import 'package:timezone/timezone.dart' as tz;
-import 'package:excel/excel.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:local_notifier/local_notifier.dart';
 import 'logic.dart';
 import 'statistics_screen.dart';
 import 'backup_manager.dart';
 import 'search_filter_screen.dart';
 import 'smart_features.dart';
-import 'package:local_notifier/local_notifier.dart';
-import 'package:image_picker/image_picker.dart';
 import 'app_strings.dart';
-import 'receipt_scanner.dart';
+import 'services/storage_service.dart';
+import 'services/excel_service.dart';
+import 'services/notification_service.dart';
+import 'widgets/add_expense_dialog.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -108,7 +104,7 @@ class BudgetHomeScreen extends StatefulWidget {
 class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
   late DateTime _targetDate;
   final TextEditingController _amountController = TextEditingController();
-  final FlutterLocalNotificationsPlugin _notificationsPlugin = FlutterLocalNotificationsPlugin();
+  final NotificationService _notificationService = NotificationService();
   
   String _daysRemaining = "--";
   double _dailyBudget = 0.0;
@@ -129,7 +125,7 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
   void initState() {
     super.initState();
     _targetDate = BudgetLogic.getInitialTargetDate(DateTime.now());
-    _initNotifications();
+    _notificationService.initialize();
     _loadData();
   }
 
@@ -174,135 +170,50 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
     return currencySymbols[code] ?? code;
   }
 
-  Future<void> _initNotifications() async {
-    // Android & iOS initialization
-    if (Platform.isAndroid || Platform.isIOS) {
-      const AndroidInitializationSettings initializationSettingsAndroid =
-          AndroidInitializationSettings('@mipmap/ic_launcher');
-      const InitializationSettings initializationSettings =
-          InitializationSettings(android: initializationSettingsAndroid);
-      
-      await _notificationsPlugin.initialize(initializationSettings);
-    }
-    // Desktop initialization is handled in main()
-  }
 
-  Future<void> _updateNotificationSchedule() async {
-    if (!_notificationsEnabled) {
-      if (Platform.isAndroid) {
-        await _notificationsPlugin.cancelAll();
-      }
-      return;
-    }
-
-    // Android: Schedule daily notification (updates the content of the scheduled job)
-    if (Platform.isAndroid) {
-      await _notificationsPlugin.zonedSchedule(
-        0,
-        AppStrings.get(context, 'notification_title', languageCode: _selectedLanguage),
-        AppStrings.get(context, 'notification_body', languageCode: _selectedLanguage)
-            .replaceAll('{amount}', _currencyFormat.format(_calculatedDaily)),
-        _nextInstanceOf9AM(),
-        const NotificationDetails(
-          android: AndroidNotificationDetails(
-            'daily_budget_channel',
-            'Daily Budget Notifications',
-            channelDescription: 'Daily reminder of available budget',
-            importance: Importance.max,
-            priority: Priority.high,
-          ),
-        ),
-        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-        matchDateTimeComponents: DateTimeComponents.time,
-      );
-    }
-  }
-
-  Future<void> _checkAndShowDesktopNotification() async {
-    if (!_notificationsEnabled) return;
-    if (!(Platform.isWindows || Platform.isLinux || Platform.isMacOS)) return;
-
-    final prefs = await SharedPreferences.getInstance();
-    final lastShownStr = prefs.getString('last_notification_date');
-    final todayStr = DateFormat('yyyy-MM-dd').format(DateTime.now());
-
-    if (lastShownStr != todayStr) {
-      // Show notification
-      final notification = LocalNotification(
-        identifier: 'daily_budget_reminder',
-        title: AppStrings.get(context, 'notification_title', languageCode: _selectedLanguage),
-        body: AppStrings.get(context, 'notification_body', languageCode: _selectedLanguage)
-            .replaceAll('{amount}', _currencyFormat.format(_calculatedDaily)),
-      );
-      
-      notification.show();
-      
-      // Save today as last shown
-      await prefs.setString('last_notification_date', todayStr);
-    }
-  }
-
-  tz.TZDateTime _nextInstanceOf9AM() {
-    final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
-    tz.TZDateTime scheduledDate = tz.TZDateTime(tz.local, now.year, now.month, now.day, 9);
-    if (scheduledDate.isBefore(now)) {
-      scheduledDate = scheduledDate.add(const Duration(days: 1));
-    }
-    return scheduledDate;
-  }
 
   Future<void> _loadData() async {
-    final prefs = await SharedPreferences.getInstance();
+    final data = await StorageService.loadBudgetData();
     setState(() {
-      // Load Target Date
-      final dateStr = prefs.getString('target_date');
-      if (dateStr != null) {
-        _targetDate = DateTime.parse(dateStr);
-      }
-
-      // Load Amount
-      final amount = prefs.getString('amount');
-      if (amount != null) {
-        _amountController.text = amount;
-      }
-
-      // Load Expenses
-      final expensesJson = prefs.getStringList('expenses');
-      if (expensesJson != null) {
-        _expenses = expensesJson.map((e) => Expense.fromJson(jsonDecode(e))).toList();
-      }
-
-      // Load Notifications
-      _notificationsEnabled = prefs.getBool('notifications_enabled') ?? false;
-
-      // Load Language and Currency
-      _selectedLanguage = prefs.getString('language') ?? 'it';
-      _selectedCurrency = prefs.getString('currency') ?? 'EUR';
-      
-      // Load Budget Period
-      final periodStr = prefs.getString('budget_period') ?? 'monthly';
-      _selectedPeriod = BudgetPeriod.values.firstWhere(
-        (p) => p.toString().split('.').last == periodStr,
-        orElse: () => BudgetPeriod.monthly,
-      );
+      _targetDate = data.targetDate;
+      _amountController.text = data.amount;
+      _expenses = data.expenses;
+      _notificationsEnabled = data.notificationsEnabled;
+      _selectedLanguage = data.language;
+      _selectedCurrency = data.currency;
+      _selectedPeriod = data.budgetPeriod;
     });
     _updateFormatters();
     _updateCalculations();
     
     // Check for desktop notification on startup
-    _checkAndShowDesktopNotification();
+    _notificationService.checkAndShowDesktopNotification(
+      enabled: _notificationsEnabled,
+      title: AppStrings.get(context, 'notification_title', languageCode: _selectedLanguage),
+      body: AppStrings.get(context, 'notification_body', languageCode: _selectedLanguage)
+          .replaceAll('{amount}', _currencyFormat.format(_calculatedDaily)),
+    );
   }
 
   Future<void> _saveData() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('target_date', _targetDate.toIso8601String());
-    await prefs.setString('amount', _amountController.text);
-    await prefs.setStringList('expenses', _expenses.map((e) => jsonEncode(e.toJson())).toList());
-    await prefs.setBool('notifications_enabled', _notificationsEnabled);
-    await prefs.setString('language', _selectedLanguage);
-    await prefs.setString('currency', _selectedCurrency);
-    await prefs.setString('budget_period', _selectedPeriod.toString().split('.').last);
-    _updateNotificationSchedule();
+    final data = BudgetData(
+      targetDate: _targetDate,
+      amount: _amountController.text,
+      expenses: _expenses,
+      notificationsEnabled: _notificationsEnabled,
+      language: _selectedLanguage,
+      currency: _selectedCurrency,
+      budgetPeriod: _selectedPeriod,
+    );
+    await StorageService.saveBudgetData(data);
+    
+    // Update notification schedule
+    await _notificationService.updateNotificationSchedule(
+      enabled: _notificationsEnabled,
+      title: AppStrings.get(context, 'notification_title', languageCode: _selectedLanguage),
+      body: AppStrings.get(context, 'notification_body', languageCode: _selectedLanguage)
+          .replaceAll('{amount}', _currencyFormat.format(_calculatedDaily)),
+    );
   }
 
   void _updateCalculations() {
@@ -341,148 +252,19 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
     }
   }
 
-  Future<void> _handleReceiptScan(TextEditingController controller) async {
-    if (!Platform.isAndroid && !Platform.isIOS) return;
 
-    final source = await showModalBottomSheet<ImageSource>(
-      context: context,
-      builder: (context) => SafeArea(
-        child: Wrap(
-          children: [
-            ListTile(
-              leading: const Icon(Icons.camera_alt),
-              title: Text(AppStrings.get(context, 'camera', languageCode: _selectedLanguage)),
-              onTap: () => Navigator.pop(context, ImageSource.camera),
-            ),
-            ListTile(
-              leading: const Icon(Icons.photo_library),
-              title: Text(AppStrings.get(context, 'gallery', languageCode: _selectedLanguage)),
-              onTap: () => Navigator.pop(context, ImageSource.gallery),
-            ),
-          ],
-        ),
-      ),
-    );
-
-    if (source != null) {
-      if (!mounted) return;
-      
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('${AppStrings.get(context, 'scan_tooltip', languageCode: _selectedLanguage)}...'), 
-        duration: const Duration(seconds: 1)
-      ));
-      
-      final amount = await ReceiptScanner.scanReceipt(source);
-      
-      if (!mounted) return;
-      if (amount != null) {
-        String formatted = amount.toStringAsFixed(2);
-        controller.text = formatted;
-        
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(AppStrings.get(context, 'amount_found', languageCode: _selectedLanguage)
-              .replaceAll('{amount}', formatted)),
-          backgroundColor: Colors.green,
-        ));
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(AppStrings.get(context, 'no_amount_found', languageCode: _selectedLanguage)),
-          backgroundColor: Colors.orange,
-        ));
-      }
-    }
-  }
 
   void _showAddExpenseDialog() {
-    final descController = TextEditingController();
-    final amountController = TextEditingController();
-    String selectedCategoryId = 'other'; // Default categoria
-
     showDialog(
       context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setState) => AlertDialog(
-          title: Text(AppStrings.get(context, 'add_expense', languageCode: _selectedLanguage)),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: descController,
-                decoration: InputDecoration(
-                  labelText: AppStrings.get(context, 'description', languageCode: _selectedLanguage),
-                ),
-                textCapitalization: TextCapitalization.sentences,
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: amountController,
-                decoration: InputDecoration(
-                  labelText: AppStrings.get(context, 'amount', languageCode: _selectedLanguage),
-                  suffixIcon: (Platform.isAndroid || Platform.isIOS)
-                      ? IconButton(
-                          icon: const Icon(Icons.camera_alt),
-                          tooltip: AppStrings.get(context, 'scan_tooltip', languageCode: _selectedLanguage),
-                          onPressed: () => _handleReceiptScan(amountController),
-                        )
-                      : null,
-                ),
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
-              ),
-              const SizedBox(height: 16),
-              // Selezione Categoria
-              DropdownButtonFormField<String>(
-                value: selectedCategoryId,
-                decoration: InputDecoration(
-                  labelText: AppStrings.get(context, 'category', languageCode: _selectedLanguage),
-                  border: const OutlineInputBorder(),
-                ),
-                items: ExpenseCategory.defaultCategories.map((category) {
-                  return DropdownMenuItem<String>(
-                    value: category.id,
-                    child: Row(
-                      children: [
-                        Icon(category.icon, color: category.color, size: 20),
-                        const SizedBox(width: 12),
-                        Text(category.getName(_selectedLanguage)),
-                      ],
-                    ),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  if (value != null) {
-                    setState(() {
-                      selectedCategoryId = value;
-                    });
-                  }
-                },
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(AppStrings.get(context, 'cancel', languageCode: _selectedLanguage)),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                final amount = double.tryParse(amountController.text.replaceAll(',', '.'));
-                if (amount != null && amount > 0) {
-                  this.setState(() {
-                    _expenses.insert(0, Expense(
-                      amount: amount,
-                      description: descController.text.isEmpty ? 'Spesa' : descController.text,
-                      date: DateTime.now(),
-                      categoryId: selectedCategoryId,
-                    ));
-                  });
-                  _updateCalculations();
-                  Navigator.pop(context);
-                }
-              },
-              child: Text(AppStrings.get(context, 'add', languageCode: _selectedLanguage)),
-            ),
-          ],
-        ),
+      builder: (context) => AddExpenseDialog(
+        languageCode: _selectedLanguage,
+        onExpenseAdded: (expense) {
+          setState(() {
+            _expenses.insert(0, expense);
+          });
+          _updateCalculations();
+        },
       ),
     );
   }
@@ -514,139 +296,30 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
   }
 
   Future<void> _exportToExcel() async {
-    try {
-      final excel = Excel.createExcel();
-      final sheet = excel['Budget'];
+    final totalBudget = double.tryParse(_amountController.text.replaceAll(',', '.')) ?? 0.0;
+    
+    final filePath = await ExcelService.exportToExcel(
+      expenses: _expenses,
+      totalBudget: totalBudget,
+      totalSpent: _totalSpent,
+      calculatedDaily: _calculatedDaily,
+      daysRemaining: _daysRemaining,
+      targetDate: _targetDate,
+      dateFormat: _dateFormat,
+    );
 
-      // Define styles
-      final headerStyle = CellStyle(
-        bold: true,
-        backgroundColorHex: ExcelColor.fromHexString('#2196F3'),
-        fontColorHex: ExcelColor.white,
-        fontSize: 14,
-        horizontalAlign: HorizontalAlign.Center,
-        verticalAlign: VerticalAlign.Center,
-      );
-
-      final labelStyle = CellStyle(
-        bold: true,
-        backgroundColorHex: ExcelColor.fromHexString('#E3F2FD'),
-      );
-
-      final currencyStyle = CellStyle(
-        numberFormat: NumFormat.standard_2,
-      );
-
-      final positiveStyle = CellStyle(
-        numberFormat: NumFormat.standard_2,
-        fontColorHex: ExcelColor.fromHexString('#4CAF50'),
-      );
-
-      final negativeStyle = CellStyle(
-        numberFormat: NumFormat.standard_2,
-        fontColorHex: ExcelColor.fromHexString('#F44336'),
-      );
-
-      final expenseHeaderStyle = CellStyle(
-        bold: true,
-        backgroundColorHex: ExcelColor.fromHexString('#90CAF9'),
-        horizontalAlign: HorizontalAlign.Center,
-      );
-
-      // Summary section
-      sheet.appendRow([TextCellValue('RIEPILOGO BUDGET')]);
-      sheet.merge(CellIndex.indexByString('A1'), CellIndex.indexByString('D1'));
-      sheet.cell(CellIndex.indexByString('A1')).cellStyle = headerStyle;
-      sheet.setRowHeight(0, 25);
-      
-      final totalBudget = double.tryParse(_amountController.text.replaceAll(',', '.')) ?? 0.0;
-      final remaining = totalBudget - _totalSpent;
-      
-      sheet.appendRow([TextCellValue('Budget Totale'), DoubleCellValue(totalBudget)]);
-      sheet.cell(CellIndex.indexByString('A2')).cellStyle = labelStyle;
-      sheet.cell(CellIndex.indexByString('B2')).cellStyle = currencyStyle;
-      
-      sheet.appendRow([TextCellValue('Totale Speso'), DoubleCellValue(_totalSpent)]);
-      sheet.cell(CellIndex.indexByString('A3')).cellStyle = labelStyle;
-      sheet.cell(CellIndex.indexByString('B3')).cellStyle = negativeStyle;
-      
-      sheet.appendRow([TextCellValue('Rimanente'), DoubleCellValue(remaining)]);
-      sheet.cell(CellIndex.indexByString('A4')).cellStyle = labelStyle;
-      sheet.cell(CellIndex.indexByString('B4')).cellStyle = remaining >= 0 ? positiveStyle : negativeStyle;
-      
-      sheet.appendRow([TextCellValue('Budget Giornaliero'), DoubleCellValue(_calculatedDaily)]);
-      sheet.cell(CellIndex.indexByString('A5')).cellStyle = labelStyle;
-      sheet.cell(CellIndex.indexByString('B5')).cellStyle = currencyStyle;
-      
-      sheet.appendRow([TextCellValue('Giorni Mancanti'), TextCellValue(_daysRemaining)]);
-      sheet.cell(CellIndex.indexByString('A6')).cellStyle = labelStyle;
-      
-      sheet.appendRow([TextCellValue('Data Target'), TextCellValue(_dateFormat.format(_targetDate))]);
-      sheet.cell(CellIndex.indexByString('A7')).cellStyle = labelStyle;
-      
-      sheet.appendRow([]);
-
-      // Expenses section
-      sheet.appendRow([TextCellValue('SPESE')]);
-      sheet.merge(CellIndex.indexByString('A9'), CellIndex.indexByString('D9'));
-      sheet.cell(CellIndex.indexByString('A9')).cellStyle = headerStyle;
-      sheet.setRowHeight(8, 25);
-      
-      sheet.appendRow([TextCellValue('Data'), TextCellValue('Descrizione'), TextCellValue('Importo'), TextCellValue('Rimanente')]);
-      for (int col = 0; col < 4; col++) {
-        sheet.cell(CellIndex.indexByColumnRow(columnIndex: col, rowIndex: 9)).cellStyle = expenseHeaderStyle;
-      }
-      
-      // Sort expenses chronologically for the report (Oldest -> Newest)
-      final sortedExpenses = List<Expense>.from(_expenses)..sort((a, b) => a.date.compareTo(b.date));
-
-      double runningBalance = totalBudget;
-      int rowIndex = 10;
-      for (var expense in sortedExpenses) {
-        runningBalance -= expense.amount;
-        sheet.appendRow([
-          TextCellValue(_dateFormat.format(expense.date)),
-          TextCellValue(expense.description),
-          DoubleCellValue(expense.amount),
-          DoubleCellValue(runningBalance),
-        ]);
-        
-        // Apply styles
-        sheet.cell(CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: rowIndex)).cellStyle = negativeStyle;
-        sheet.cell(CellIndex.indexByColumnRow(columnIndex: 3, rowIndex: rowIndex)).cellStyle = 
-            runningBalance >= 0 ? positiveStyle : negativeStyle;
-        rowIndex++;
-      }
-
-      // Set column widths
-      sheet.setColumnWidth(0, 15);  // Data
-      sheet.setColumnWidth(1, 30);  // Descrizione
-      sheet.setColumnWidth(2, 12);  // Importo
-      sheet.setColumnWidth(3, 12);  // Rimanente
-
-      // Save file
-      final directory = await getApplicationDocumentsDirectory();
-      final filePath = '${directory.path}/budget_${DateTime.now().millisecondsSinceEpoch}.xlsx';
-      final fileBytes = excel.save();
-      
-      if (fileBytes != null) {
-        final file = File(filePath);
-        await file.writeAsBytes(fileBytes);
-        
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('${AppStrings.get(context, 'export_success', languageCode: _selectedLanguage)}\n$filePath'),
-              duration: const Duration(seconds: 5),
-            ),
-          );
-        }
-      }
-    } catch (e) {
-      if (mounted) {
+    if (mounted) {
+      if (filePath != null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('${AppStrings.get(context, 'export_error', languageCode: _selectedLanguage)}: $e'),
+            content: Text('${AppStrings.get(context, 'export_success', languageCode: _selectedLanguage)}\n$filePath'),
+            duration: const Duration(seconds: 5),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(AppStrings.get(context, 'export_error', languageCode: _selectedLanguage)),
             backgroundColor: Colors.red,
           ),
         );
@@ -1048,6 +721,7 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
         child: Focus(
           autofocus: true,
           child: Scaffold(
+            floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
             floatingActionButton: FloatingActionButton(
               onPressed: _showAddExpenseDialog,
               tooltip: AppStrings.get(context, 'add_expense', languageCode: _selectedLanguage),
@@ -1294,6 +968,7 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
                 child: _expenses.isEmpty
                     ? Center(child: Text(AppStrings.get(context, 'no_expenses', languageCode: _selectedLanguage), style: const TextStyle(color: Colors.grey)))
                     : ListView.builder(
+                        padding: const EdgeInsets.only(bottom: 80),
                         itemCount: _expenses.length,
                         itemBuilder: (context, index) {
                           final expense = _expenses[index];

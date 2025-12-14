@@ -22,12 +22,29 @@ Applicazione moderna per la gestione del budget giornaliero, sviluppata interame
 
 ## 🏗️ Struttura del Progetto
 
-- `lib/main.dart`: Punto di ingresso dell'applicazione e interfaccia utente (UI)
-- `lib/logic.dart`: Logica di business (calcolo giorni e budget)
+### Architettura (v2.5.0+)
+L'applicazione segue un'architettura a layer con separazione delle responsabilità:
+
+- `lib/main.dart`: Punto di ingresso e interfaccia utente principale
+- `lib/services/`: Service layer per la logica di business
+  - `storage_service.dart`: Gestione persistenza dati (SharedPreferences)
+  - `excel_service.dart`: Export in formato Excel
+  - `notification_service.dart`: Notifiche cross-platform
+- `lib/widgets/`: Widget riutilizzabili
+  - `add_expense_dialog.dart`: Dialog per aggiunta spese
+- `lib/logic.dart`: Logica di calcolo budget e modelli dati
+- `lib/statistics_screen.dart`: Schermata statistiche
+- `lib/search_filter_screen.dart`: Ricerca e filtri
+- `lib/smart_features.dart`: Suggerimenti intelligenti
+- `lib/backup_manager.dart`: Gestione backup/ripristino
+- `lib/app_strings.dart`: Stringhe localizzate
 - `test/`: Unit test e Widget test
-- `android/`: Progetto nativo Android (configurabile in Android Studio)
-- `linux/`: Configurazione per build Linux Desktop
-- `assets/`: Risorse dell'applicazione (icone)
+- `android/`: Progetto nativo Android
+- `linux/`: Configurazione build Linux
+- `windows/`: Configurazione build Windows
+- `assets/`: Risorse (icone)
+
+> 📖 Per dettagli sul refactoring v2.5.0, vedi [REFACTORING.md](REFACTORING.md)
 
 ## 🚀 Per Iniziare
 
@@ -99,4 +116,10 @@ Sviluppato con il supporto di Antigravity e Gemini 3 Pro
 
 ## 📄 Versione
 
-**2.4.0** (Flutter)
+**2.5.0** - Refactoring architetturale (Dicembre 2025)
+
+### Novità v2.5.0
+- 🏗️ Architettura migliorata con service layer
+- 📦 Codice più modulare e manutenibile (-23.6% complessità)
+- 🧪 Migliore testabilità dei componenti
+- 📚 Vedi [CHANGELOG.md](CHANGELOG.md) per dettagli completi

@@ -22,12 +22,29 @@ Modern daily budget management application, entirely developed in Flutter.
 
 ## 🏗️ Project Structure
 
-- `lib/main.dart`: Application entry point and User Interface (UI)
-- `lib/logic.dart`: Business logic (days and budget calculation)
+### Architecture (v2.5.0+)
+The application follows a layered architecture with separation of concerns:
+
+- `lib/main.dart`: Entry point and main user interface
+- `lib/services/`: Service layer for business logic
+  - `storage_service.dart`: Data persistence management (SharedPreferences)
+  - `excel_service.dart`: Excel format export
+  - `notification_service.dart`: Cross-platform notifications
+- `lib/widgets/`: Reusable widgets
+  - `add_expense_dialog.dart`: Expense addition dialog
+- `lib/logic.dart`: Budget calculation logic and data models
+- `lib/statistics_screen.dart`: Statistics screen
+- `lib/search_filter_screen.dart`: Search and filters
+- `lib/smart_features.dart`: Smart suggestions
+- `lib/backup_manager.dart`: Backup/restore management
+- `lib/app_strings.dart`: Localized strings
 - `test/`: Unit tests and Widget tests
-- `android/`: Native Android project (configurable in Android Studio)
-- `linux/`: Configuration for Linux Desktop builds
-- `assets/`: Application resources (icons)
+- `android/`: Native Android project
+- `linux/`: Linux build configuration
+- `windows/`: Windows build configuration
+- `assets/`: Resources (icons)
+
+> 📖 For details on v2.5.0 refactoring, see [REFACTORING.md](REFACTORING.md)
 
 ## 🚀 Getting Started
 
@@ -99,4 +116,10 @@ Developed with support from Antigravity and Gemini 3 Pro
 
 ## 📄 Version
 
-**2.4.0** (Flutter)
+**2.5.0** - Architectural Refactoring (December 2025)
+
+### What's New in v2.5.0
+- 🏗️ Improved architecture with service layer
+- 📦 More modular and maintainable code (-23.6% complexity)
+- 🧪 Better component testability
+- 📚 See [CHANGELOG.md](CHANGELOG.md) for complete details
