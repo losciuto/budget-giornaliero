@@ -116,7 +116,12 @@ Sviluppato con il supporto di Antigravity e Gemini 3 Pro
 
 ## 📄 Versione
 
-**2.5.0** - Refactoring architetturale (Dicembre 2025)
+**2.6.0** - Miglioramenti Android Backup (Dicembre 2025)
+
+### Novità v2.6.0
+
+- **Cartella Backup Android**: I backup ora vengono salvati nella cartella Download pubblica per maggiore accessibilità
+- **Permessi Ottimizzati**: Gestione automatica dei permessi storage per tutte le versioni Android
 
 ### Novità v2.5.0
 - 🏗️ Architettura migliorata con service layer

@@ -1,7 +1,9 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:excel/excel.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../logic.dart';
 
 /// Service for exporting budget data to Excel format
@@ -127,8 +129,58 @@ class ExcelService {
       sheet.setColumnWidth(3, 12);  // Rimanente
 
       // Save file
-      final directory = await getApplicationDocumentsDirectory();
-      final filePath = '${directory.path}/budget_${DateTime.now().millisecondsSinceEpoch}.xlsx';
+      String filePath;
+      final timestamp = DateTime.now().millisecondsSinceEpoch;
+      final fileName = 'budget_$timestamp.xlsx';
+
+      if (Platform.isAndroid) {
+        try {
+          final directory = Directory('/storage/emulated/0/Download');
+          if (!await directory.exists()) {
+            await directory.create(recursive: true);
+          }
+          filePath = '${directory.path}/$fileName';
+          
+          final fileBytes = excel.save();
+          if (fileBytes != null) {
+            final file = File(filePath);
+            
+            // Prova a scrivere direttamente (Android 13+)
+            try {
+              await file.writeAsBytes(fileBytes);
+              return filePath;
+            } catch (e) {
+              // Chiedi i permessi e riprova (Android < 13)
+              var status = await Permission.storage.request();
+              if (status.isGranted) {
+                await file.writeAsBytes(fileBytes);
+                return filePath;
+              } else {
+                // Fallback su Documents se i permessi sono negati
+                final docDir = await getApplicationDocumentsDirectory();
+                filePath = '${docDir.path}/$fileName';
+                final docFile = File(filePath);
+                await docFile.writeAsBytes(fileBytes);
+                return filePath;
+              }
+            }
+          }
+        } catch (e) {
+          debugPrint('Errore accesso Download Excel, fallback su Documents: $e');
+          final directory = await getApplicationDocumentsDirectory();
+          filePath = '${directory.path}/$fileName';
+          final fileBytes = excel.save();
+          if (fileBytes != null) {
+            final file = File(filePath);
+            await file.writeAsBytes(fileBytes);
+            return filePath;
+          }
+        }
+      } else {
+        final directory = await getApplicationDocumentsDirectory();
+        filePath = '${directory.path}/$fileName';
+      }
+
       final fileBytes = excel.save();
       
       if (fileBytes != null) {

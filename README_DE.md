@@ -2,7 +2,7 @@
 
 Eine einfache und leistungsstarke Flutter-App zur Verwaltung Ihres monatlichen Budgets und zur Kontrolle der täglichen Ausgaben.
 
-![Version](https://img.shields.io/badge/version-2.5.0-blue.svg)
+![Version](https://img.shields.io/badge/version-2.6.0-blue.svg)
 ![Flutter](https://img.shields.io/badge/Flutter-3.0%2B-02569B.svg)
 ![Plattform](https://img.shields.io/badge/platform-Android%20%7C%20Linux%20%7C%20Windows-lightgrey.svg)
 

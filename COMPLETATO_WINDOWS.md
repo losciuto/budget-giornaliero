@@ -198,7 +198,7 @@ build\windows\x64\runner\Release\
 ## 📞 SUPPORTO
 
 **Autore**: [losciuto](https://github.com/losciuto/budget-giornaliero)  
-**Versione**: 2.5.0 (Flutter) - Refactoring Architetturale  
+**Versione**: 2.6.0 (Flutter) - Miglioramenti Android Backup  
 **Piattaforme**: Android, Linux, Windows  
 **Data**: Dicembre 2025  
 

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'logic.dart';
 import 'app_strings.dart';
 
@@ -37,8 +38,39 @@ class BackupManager {
       final timestamp = DateTime.now().millisecondsSinceEpoch;
       final fileName = 'budget_backup_$timestamp.json';
       
-      if (Platform.isAndroid || Platform.isIOS) {
-        // Mobile: salva in Documents
+      if (Platform.isAndroid) {
+        // Android: salva nella cartella Download pubblica
+        try {
+          final directory = Directory('/storage/emulated/0/Download');
+          if (!await directory.exists()) {
+            await directory.create(recursive: true);
+          }
+          final file = File('${directory.path}/$fileName');
+          
+          // Prova a scrivere direttamente (funziona su Android 13+ senza permessi particolari per Download)
+          try {
+            await file.writeAsString(jsonString);
+            return file.path;
+          } catch (e) {
+            // Se fallisce, chiedi i permessi e riprova (necessario su Android < 13)
+            var status = await Permission.storage.request();
+            if (status.isGranted) {
+              await file.writeAsString(jsonString);
+              return file.path;
+            } else {
+              throw Exception('Permesso negato');
+            }
+          }
+        } catch (e) {
+          debugPrint('Errore accesso Download, fallback su Documents: $e');
+          // Fallback definitivo su Documents
+          final directory = await getApplicationDocumentsDirectory();
+          final file = File('${directory.path}/$fileName');
+          await file.writeAsString(jsonString);
+          return file.path;
+        }
+      } else if (Platform.isIOS) {
+        // iOS: salva in Documents
         final directory = await getApplicationDocumentsDirectory();
         final file = File('${directory.path}/$fileName');
         await file.writeAsString(jsonString);

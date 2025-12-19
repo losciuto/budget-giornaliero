@@ -1,5 +1,22 @@
 # Changelog
 
+## [2.6.0] - 2025-12-19
+
+### 📱 Miglioramenti Android
+
+- **Cartella Backup Migliorata**: I backup Android ora vengono salvati nella cartella Download pubblica (`/storage/emulated/0/Download/`) invece della cartella Documents privata dell'app
+  - Maggiore accessibilità: i file sono facilmente visibili nel file manager
+  - Facile condivisione e backup manuale
+  - Fallback automatico a Documents se i permessi vengono negati
+- **Permessi Ottimizzati**: Aggiunti permessi storage per Android 10-12, nessun permesso richiesto per Android 13+
+- **Compatibilità**: Supporto completo per Android 9+ con gestione automatica dei permessi
+
+### 🔧 Dipendenze
+
+- Aggiunto `permission_handler: ^11.3.1` per gestione permessi runtime
+
+---
+
 ## [2.5.0] - 2025-12-14
 
 ### 🏗️ Refactoring Maggiore
