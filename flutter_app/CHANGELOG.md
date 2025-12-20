@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.6.2] - 2025-12-20
+
+### ✨ Nuove Funzionalità
+- Aggiunte nuove categorie di spesa: **Spese per Mara**, **Contante**, **Medicinali**
+
+## [2.6.1] - 2025-12-20
+
+### 📚 Documentazione
+- Tradotta documentazione tecnica in inglese (`REFACTORING_EN.md`, `PROJECT_STRUCTURE_EN.md`, `CROSS_PLATFORM_VERIFICATION_EN.md`)
+- Aggiornati i README principali per riflettere l'attuale stato del progetto e della documentazione
+- Allineate le versioni in tutti i file di configurazione
+
 ## [2.6.0] - 2025-12-19
 
 ### 📱 Miglioramenti Android

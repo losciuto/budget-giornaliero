@@ -174,7 +174,7 @@ class SmartSuggestionsWidget extends StatelessWidget {
             margin: const EdgeInsets.only(right: 8),
             child: Card(
               elevation: 2,
-              color: suggestion.color.withOpacity(0.08),
+              color: suggestion.color.withAlpha((0.1 * 255).toInt()),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
                 side: BorderSide(color: suggestion.color.withOpacity(0.3), width: 1),

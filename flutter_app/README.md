@@ -116,7 +116,16 @@ Sviluppato con il supporto di Antigravity e Gemini 3 Pro
 
 ## 📄 Versione
 
-**2.6.0** - Miglioramenti Android Backup (Dicembre 2025)
+**2.6.2** - Nuove Categorie (Dicembre 2025)
+
+### Novità v2.6.2
+
+- **Nuove Categorie**: Aggiunte categorie per "Spese per Mara", "Contante" e "Medicinali"
+
+### Novità v2.6.1
+
+- **Documentazione Internazionale**: Tradotta tutta la documentazione tecnica principale in inglese
+- **Consistenza Versioni**: Allineamento delle versioni in tutti i file di rilascio
 
 ### Novità v2.6.0
 

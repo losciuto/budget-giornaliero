@@ -44,7 +44,7 @@ The application follows a layered architecture with separation of concerns:
 - `windows/`: Windows build configuration
 - `assets/`: Resources (icons)
 
-> 📖 For details on v2.5.0 refactoring, see [REFACTORING.md](REFACTORING.md)
+> 📖 For details on v2.5.0 refactoring, see [REFACTORING_EN.md](REFACTORING_EN.md)
 
 ## 🚀 Getting Started
 
@@ -116,7 +116,16 @@ Developed with support from Antigravity and Gemini 3 Pro
 
 ## 📄 Version
 
-**2.6.0** - Android Backup Improvements (December 2025)
+**2.6.2** - New Categories (December 2025)
+
+### What's New in v2.6.2
+
+- **New Categories**: Added categories for "Mara's Expenses", "Cash", and "Medicines"
+
+### What's New in v2.6.1
+
+- **International Documentation**: All main technical documentation translated into English
+- **Version Consistency**: Version alignment across all release files
 
 ### What's New in v2.6.0
 

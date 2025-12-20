@@ -65,6 +65,27 @@ class ExpenseCategory {
       color: Color(0xFFFFA07A),
     ),
     ExpenseCategory(
+      id: 'mara',
+      nameIt: 'Spese per Mara',
+      nameEn: 'Mara\'s Expenses',
+      icon: Icons.favorite,
+      color: Color(0xFFE91E63),
+    ),
+    ExpenseCategory(
+      id: 'cash',
+      nameIt: 'Contante',
+      nameEn: 'Cash',
+      icon: Icons.payments,
+      color: Color(0xFF4CAF50),
+    ),
+    ExpenseCategory(
+      id: 'medicines',
+      nameIt: 'Medicinali',
+      nameEn: 'Medicines',
+      icon: Icons.medication,
+      color: Color(0xFF2196F3),
+    ),
+    ExpenseCategory(
       id: 'appliances',
       nameIt: 'Elettrodomestici',
       nameEn: 'Appliances',
@@ -191,6 +212,12 @@ class BudgetLogic {
   /// Metodo legacy per compatibilità
   static DateTime getInitialTargetDate(DateTime now, {int targetDay = 27}) {
     return getNextTargetDate(now, BudgetPeriod.monthly, targetDay: targetDay);
+  }
+
+  /// Calcola i giorni mancanti fino al prossimo giorno target (default 27)
+  static int calculateDays(DateTime now, {int targetDay = 27}) {
+    final targetDate = getInitialTargetDate(now, targetDay: targetDay);
+    return getDaysRemaining(now, targetDate);
   }
 }
 

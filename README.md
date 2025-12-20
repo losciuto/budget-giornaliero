@@ -1,9 +1,9 @@
 # Budget Giornaliero
 
 Un'applicazione cross-platform (Android, Linux, Windows) per calcolare il budget giornaliero disponibile fino a una data specifica del mese corrente.
-![Version](https://img.shields.io/badge/version-2.6.0-blue.svg)
+![Version](https://img.shields.io/badge/version-2.6.2-blue.svg)
 
-**Versione Corrente:** 2.6.0 (Flutter) - Miglioramenti Android Backup
+**Versione Corrente:** 2.6.2 (Flutter) - Nuove Categorie
 
 ## 🚀 Nuova Versione Flutter
 
@@ -30,7 +30,7 @@ Il codice sorgente si trova nella cartella `flutter_app/`.
 ## 🌍 Lingue / Languages
 
 *   🇮🇹 [Italiano](README.md)
-*   🇬🇧 [English](README_EN.md) (To be created)
+*   🇬🇧 [English](README_EN.md)
 *   🇪🇸 [Español](README_ES.md)
 *   🇫🇷 [Français](README_FR.md)
 *   🇩🇪 [Deutsch](README_DE.md)
