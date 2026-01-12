@@ -148,6 +148,6 @@ The code is clean and compatible with all platforms.
 ---
 
 **Verification Date**: December 1, 2025  
-**Version**: 2.6.1 (Flutter)  
+**Version**: 2.7.0 (Flutter)  
 **Author**: Massimo Lo Sciuto  
 **Support**: Antigravity (Gemini 3 Pro)

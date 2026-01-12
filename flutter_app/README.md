@@ -116,7 +116,13 @@ Sviluppato con il supporto di Antigravity e Gemini 3 Pro
 
 ## 📄 Versione
 
-**2.6.2** - Nuove Categorie (Dicembre 2025)
+**2.7.0** - Resoconti Periodici (Gennaio 2026)
+
+### Novità v2.7.0
+
+- **Resoconti Periodici**: Nuova dashboard completa per report giornalieri, settimanali, mensili e annuali
+- **Grafici Interattivi**: Grafici a barre per una visualizzazione immediata dei trend di spesa
+- **Navigazione Temporale**: Sfoglia facilmente i periodi passati e futuri (giorni, settimane, mesi, anni)
 
 ### Novità v2.6.2
 

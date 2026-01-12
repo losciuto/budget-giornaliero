@@ -16,6 +16,7 @@ import 'services/storage_service.dart';
 import 'services/excel_service.dart';
 import 'services/notification_service.dart';
 import 'widgets/add_expense_dialog.dart';
+import 'screens/periodic_reports_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -341,6 +342,19 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
     );
   }
 
+  void _showPeriodicReports() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PeriodicReportsScreen(
+          expenses: _expenses,
+          languageCode: _selectedLanguage,
+          currencyFormat: _currencyFormat,
+        ),
+      ),
+    );
+  }
+
   void _showSearchFilter() {
     Navigator.push(
       context,
@@ -628,7 +642,7 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
                     "${AppStrings.get(context, 'author', languageCode: _selectedLanguage)}: Massimo Lo Sciuto\n"
                     "${AppStrings.get(context, 'support', languageCode: _selectedLanguage)}: Antigravity\n"
                     "${AppStrings.get(context, 'development', languageCode: _selectedLanguage)}: Gemini 3 Pro\n"
-                    "${AppStrings.get(context, 'version', languageCode: _selectedLanguage)}: 2.6.0 (Flutter)",
+                    "${AppStrings.get(context, 'version', languageCode: _selectedLanguage)}: 2.7.0 (Flutter)",
                   ),
                   const SizedBox(height: 12),
                   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS)
@@ -778,6 +792,12 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
                     tooltip: AppStrings.get(context, 'statistics', languageCode: _selectedLanguage),
                     onPressed: _showStatistics,
                     color: Colors.purpleAccent,
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.analytics_outlined),
+                    tooltip: AppStrings.get(context, 'periodic_reports', languageCode: _selectedLanguage),
+                    onPressed: _showPeriodicReports,
+                    color: Colors.tealAccent,
                   ),
                   // Menu Altro
                   PopupMenuButton<String>(

@@ -116,7 +116,13 @@ Developed with support from Antigravity and Gemini 3 Pro
 
 ## 📄 Version
 
-**2.6.2** - New Categories (December 2025)
+**2.7.0** - Periodic Reports (January 2026)
+
+### What's New in v2.7.0
+
+- **Periodic Reports**: New complete dashboard for daily, weekly, monthly, and yearly reports
+- **Interactive Charts**: Bar charts for immediate visualization of spending trends
+- **Time Navigation**: Easily browse through past and future periods (days, weeks, months, years)
 
 ### What's New in v2.6.2
 

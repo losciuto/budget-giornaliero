@@ -219,5 +219,51 @@ class BudgetLogic {
     final targetDate = getInitialTargetDate(now, targetDay: targetDay);
     return getDaysRemaining(now, targetDate);
   }
+
+  /// Restituisce l'inizio della settimana (Lunedì) per una data data
+  static DateTime getStartOfWeek(DateTime date) {
+    return DateTime(date.year, date.month, date.day).subtract(Duration(days: date.weekday - 1));
+  }
+
+  /// Restituisce la fine della settimana (Domenica) per una data data
+  static DateTime getEndOfWeek(DateTime date) {
+    return getStartOfWeek(date).add(const Duration(days: 6, hours: 23, minutes: 59, seconds: 59));
+  }
+
+  /// Filtra le spese in un intervallo di date
+  static List<Expense> getExpensesInPeriod(List<Expense> expenses, DateTime start, DateTime end) {
+    return expenses.where((e) => e.date.isAfter(start.subtract(const Duration(seconds: 1))) && 
+                                e.date.isBefore(end.add(const Duration(seconds: 1)))).toList();
+  }
+
+  /// Calcola il totale speso in una specifica settimana
+  static double calculateWeeklyTotal(List<Expense> expenses, DateTime date) {
+    final start = getStartOfWeek(date);
+    final end = getEndOfWeek(date);
+    return calculateTotalExpenses(getExpensesInPeriod(expenses, start, end));
+  }
+
+  /// Calcola il totale speso in un specifico mese
+  static double calculateMonthlyTotal(List<Expense> expenses, DateTime date) {
+    final start = DateTime(date.year, date.month, 1);
+    final end = DateTime(date.year, date.month + 1, 0, 23, 59, 59);
+    return calculateTotalExpenses(getExpensesInPeriod(expenses, start, end));
+  }
+
+  /// Calcola il totale speso in un specifico anno
+  static double calculateYearlyTotal(List<Expense> expenses, int year) {
+    final start = DateTime(year, 1, 1);
+    final end = DateTime(year, 12, 31, 23, 59, 59);
+    return calculateTotalExpenses(getExpensesInPeriod(expenses, start, end));
+  }
+
+  /// Raggruppa le spese mensili per un anno
+  static Map<int, double> getMonthlyBreakdown(List<Expense> expenses, int year) {
+    final Map<int, double> breakdown = {};
+    for (int month = 1; month <= 12; month++) {
+      breakdown[month] = calculateMonthlyTotal(expenses, DateTime(year, month));
+    }
+    return breakdown;
+  }
 }
 

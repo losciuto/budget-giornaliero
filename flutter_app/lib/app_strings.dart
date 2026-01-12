@@ -100,6 +100,20 @@ class AppStrings {
       'amount_found': 'Importo rilevato: {amount}',
       'no_amount_found': 'Nessun importo rilevato',
       'scan_tooltip': 'Scansiona importo da immagine',
+      
+      // Periodic Reports
+      'periodic_reports': 'Resoconti Periodici',
+      'daily_summary': 'Riepilogo Giornaliero',
+      'weekly_summary': 'Riepilogo Settimanale',
+      'monthly_summary': 'Riepilogo Mensile',
+      'yearly_summary': 'Riepilogo Annuale',
+      'week': 'Settimana',
+      'month': 'Mese',
+      'year': 'Anno',
+      'previous': 'Precedente',
+      'next': 'Successivo',
+      'average_daily': 'Spesa media giornaliera',
+      'total_period': 'Totale Periodo',
     },
     'en': {
       'title': 'Daily Budget',
@@ -199,6 +213,20 @@ class AppStrings {
       'amount_found': 'Amount found: {amount}',
       'no_amount_found': 'No amount found',
       'scan_tooltip': 'Scan amount from image',
+      
+      // Periodic Reports
+      'periodic_reports': 'Periodic Reports',
+      'daily_summary': 'Daily Summary',
+      'weekly_summary': 'Weekly Summary',
+      'monthly_summary': 'Monthly Summary',
+      'yearly_summary': 'Yearly Summary',
+      'week': 'Week',
+      'month': 'Month',
+      'year': 'Year',
+      'previous': 'Previous',
+      'next': 'Next',
+      'average_daily': 'Average daily expense',
+      'total_period': 'Total Period',
     },
     'es': {
       'title': 'Presupuesto Diario',

@@ -163,7 +163,7 @@ L'applicazione è stata ottimizzata per Windows:
 
 ## Note sulla Versione
 
-Versione: 2.6.0 (Flutter) - Dicembre 2025
+Versione: 2.7.0 (Flutter) - Gennaio 2026
 - **Refactoring architetturale**: Codice più modulare e manutenibile
 - Supporto completo per Windows 10/11
 - Interfaccia ottimizzata per desktop

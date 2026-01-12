@@ -2,7 +2,7 @@
 
 A cross-platform application (Android, Linux, Windows) to calculate the daily budget available until a specific date of the current month.
 
-**Current Version:** 2.6.2 (Flutter) - New Categories
+**Current Version:** 2.7.0 (Flutter) - Periodic Reports
 
 ## 🚀 New Flutter Version
 

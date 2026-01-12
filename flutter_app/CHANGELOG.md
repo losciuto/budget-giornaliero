@@ -1,9 +1,16 @@
 # Changelog
 
-## [2.6.2] - 2025-12-20
+## [2.7.0] - 2026-01-12
 
 ### ✨ Nuove Funzionalità
-- Aggiunte nuove categorie di spesa: **Spese per Mara**, **Contante**, **Medicinali**
+- **Gestione Costi Periodici**: Nuova dashboard con resoconti dettagliati
+  - **Riepilogo Giornaliero**: Visualizzazione puntuale delle spese del giorno
+  - **Riepilogo Settimanale**: Grafico a barre dei 7 giorni e totale settimanale
+  - **Riepilogo Mensile**: Analisi dell'andamento delle ultime settimane del mese
+  - **Riepilogo Annuale**: Panoramica completa dei 12 mesi con grafico comparativo
+- **Navigazione Temporale**: Possibilità di scorrere avanti e indietro tra i periodi (giorni, settimane, mesi, anni)
+
+## [2.6.2] - 2025-12-20
 
 ## [2.6.1] - 2025-12-20
 
