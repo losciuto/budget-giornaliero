@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.7.1] - 2026-01-12
+
+### 🔧 Miglioramenti
+- Allineamento versione e manutenzione ordinaria
+
 ## [2.7.0] - 2026-01-12
 
 ### ✨ Nuove Funzionalità

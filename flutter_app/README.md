@@ -116,7 +116,7 @@ Sviluppato con il supporto di Antigravity e Gemini 3 Pro
 
 ## 📄 Versione
 
-**2.7.0** - Resoconti Periodici (Gennaio 2026)
+**2.7.1** - Resoconti Periodici (Gennaio 2026)
 
 ### Novità v2.7.0
 

@@ -116,7 +116,7 @@ Developed with support from Antigravity and Gemini 3 Pro
 
 ## 📄 Version
 
-**2.7.0** - Periodic Reports (January 2026)
+**2.7.1** - Periodic Reports (January 2026)
 
 ### What's New in v2.7.0
 
