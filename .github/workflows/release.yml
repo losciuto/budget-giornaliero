@@ -1,0 +1,171 @@
+name: Build & Release Flutter app
+
+on:
+  push:
+    tags:
+      - 'v*'   # avvia al tag di rilascio
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag da rilasciare (es. v2.7.2)'
+        required: false
+        default: ''
+
+jobs:
+  # ---------- Android APK ----------
+  build-android-apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - name: Build Android APK
+        run: |
+          cd flutter_app
+          flutter pub get
+          flutter build apk --release
+      - name: Archive APK
+        run: |
+          cd flutter_app/build/app/outputs/flutter-apk
+          zip -j ../../../../android_apk.zip app-release.apk
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: android_apk
+          path: flutter_app/android_apk.zip
+
+  # ---------- Android AAB ----------
+  build-android-aab:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - name: Build Android App Bundle
+        run: |
+          cd flutter_app
+          flutter pub get
+          flutter build appbundle --release
+      - name: Archive AAB
+        run: |
+          cd flutter_app/build/app/outputs/bundle/release
+          zip -j ../../../../android_aab.zip app-release.aab
+      - name: Upload AAB artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: android_aab
+          path: flutter_app/android_aab.zip
+
+  # ---------- Linux ----------
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - name: Build Linux release
+        run: |
+          cd flutter_app
+          flutter pub get
+          flutter build linux --release
+      - name: Archive Linux bundle
+        run: |
+          cd flutter_app/build/linux/x64/release/bundle
+          tar czf ../../../../linux_release.tar.gz .
+      - name: Upload Linux artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux_bundle
+          path: flutter_app/linux_release.tar.gz
+
+  # ---------- Windows ----------
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - name: Build Windows release
+        run: |
+          cd flutter_app
+          flutter pub get
+          flutter build windows --release
+      - name: Archive Windows artifact
+        run: |
+          cd flutter_app/build/windows/runner/Release
+          7z a ../../../windows_release.zip .
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows_exe
+          path: flutter_app/windows_release.zip
+
+  # ---------- iOS ----------
+  build-ios:
+    runs-on: macos-latest
+    env:
+      APPLE_DEVELOPER_CERTIFICATE: ${{ secrets.APPLE_DEVELOPER_CERTIFICATE }}
+      APPLE_DEVELOPER_PASSWORD: ${{ secrets.APPLE_DEVELOPER_PASSWORD }}
+      PROVISIONING_PROFILE: ${{ secrets.PROVISIONING_PROFILE }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - name: Set up signing (optional)
+        if: env.APPLE_DEVELOPER_CERTIFICATE != ''
+        run: |
+          echo "$APPLE_DEVELOPER_CERTIFICATE" | base64 -d > cert.p12
+          security create-keychain -p action build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p action build.keychain
+          security import cert.p12 -k build.keychain -P "$APPLE_DEVELOPER_PASSWORD" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple: -s -k action build.keychain
+      - name: Build iOS IPA
+        run: |
+          cd flutter_app
+          flutter pub get
+          flutter build ipa --release
+      - name: Archive iOS artifact
+        run: |
+          cd flutter_app/build/ios/ipa
+          zip -j ../../../../ios_ipa.zip *.ipa
+      - name: Upload iOS artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios_ipa
+          path: flutter_app/ios_ipa.zip
+
+  # ---------- Create GitHub Release & upload all assets ----------
+  create-release:
+    needs: [build-android-apk, build-android-aab, build-linux, build-windows, build-ios]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./artifacts
+      - name: Create GitHub Release
+        id: release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          body: "Release automatizzata creata da GitHub Actions."
+          draft: false
+          prerelease: false
+          files: |
+            ./artifacts/android_apk/android_apk.zip
+            ./artifacts/android_aab/android_aab.zip
+            ./artifacts/linux_bundle/linux_release.tar.gz
+            ./artifacts/windows_exe/windows_release.zip
+            ./artifacts/ios_ipa/ios_ipa.zip
