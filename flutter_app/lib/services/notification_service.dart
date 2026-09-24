@@ -15,10 +15,19 @@ class NotificationService {
     if (Platform.isAndroid || Platform.isIOS) {
       const AndroidInitializationSettings initializationSettingsAndroid =
           AndroidInitializationSettings('@mipmap/ic_launcher');
+      const DarwinInitializationSettings initializationSettingsDarwin =
+          DarwinInitializationSettings(
+        requestAlertPermission: true,
+        requestBadgePermission: true,
+        requestSoundPermission: true,
+      );
       const InitializationSettings initializationSettings =
-          InitializationSettings(android: initializationSettingsAndroid);
+          InitializationSettings(
+        android: initializationSettingsAndroid,
+        iOS: initializationSettingsDarwin,
+      );
       
-      await _mobilePlugin.initialize(initializationSettings);
+      await _mobilePlugin.initialize(settings: initializationSettings);
     }
     // Desktop initialization is handled in main()
   }
@@ -34,20 +43,25 @@ class NotificationService {
       return;
     }
 
-    // Android: Schedule daily notification
-    if (Platform.isAndroid) {
+    // Android & iOS: Schedule daily notification
+    if (Platform.isAndroid || Platform.isIOS) {
       await _mobilePlugin.zonedSchedule(
-        0,
-        title,
-        body,
-        _nextInstanceOf9AM(),
-        const NotificationDetails(
+        id: 0,
+        title: title,
+        body: body,
+        scheduledDate: _nextInstanceOf9AM(),
+        notificationDetails: const NotificationDetails(
           android: AndroidNotificationDetails(
             'daily_budget_channel',
             'Daily Budget Notifications',
             channelDescription: 'Daily reminder of available budget',
             importance: Importance.max,
             priority: Priority.high,
+          ),
+          iOS: DarwinNotificationDetails(
+            presentAlert: true,
+            presentBadge: true,
+            presentSound: true,
           ),
         ),
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
@@ -85,7 +99,7 @@ class NotificationService {
 
   /// Cancel all scheduled notifications
   Future<void> cancelAll() async {
-    if (Platform.isAndroid) {
+    if (Platform.isAndroid || Platform.isIOS) {
       await _mobilePlugin.cancelAll();
     }
   }

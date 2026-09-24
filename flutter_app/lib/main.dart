@@ -1,4 +1,5 @@
 import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -17,9 +18,17 @@ import 'services/excel_service.dart';
 import 'services/notification_service.dart';
 import 'widgets/add_expense_dialog.dart';
 import 'screens/periodic_reports_screen.dart';
+import 'widgets/ios_simulator_frame.dart';
 
-void main() async {
+void main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  final bool simulateIOS = args.contains('--ios') ||
+      const bool.fromEnvironment('SIMULATE_IOS', defaultValue: false);
+  
+  if (simulateIOS && kDebugMode) {
+    debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+  }
   
   if (Platform.isWindows || Platform.isLinux) {
     await localNotifier.setup(
@@ -29,7 +38,7 @@ void main() async {
   }
   
   tz.initializeTimeZones();
-  runApp(const BudgetApp());
+  runApp(BudgetApp(initialSimulateIOS: simulateIOS));
 }
 
 // Intent classes for keyboard shortcuts
@@ -63,8 +72,31 @@ class _RefreshIntent extends Intent {
 
 // AppStrings moved to app_strings.dart
 
-class BudgetApp extends StatelessWidget {
-  const BudgetApp({super.key});
+class BudgetApp extends StatefulWidget {
+  final bool initialSimulateIOS;
+  const BudgetApp({super.key, this.initialSimulateIOS = false});
+
+  @override
+  State<BudgetApp> createState() => _BudgetAppState();
+}
+
+class _BudgetAppState extends State<BudgetApp> {
+  late bool _isIOSMode;
+
+  @override
+  void initState() {
+    super.initState();
+    _isIOSMode = widget.initialSimulateIOS;
+  }
+
+  void _toggleIOSMode() {
+    setState(() {
+      _isIOSMode = !_isIOSMode;
+      if (kDebugMode) {
+        debugDefaultTargetPlatformOverride = _isIOSMode ? TargetPlatform.iOS : null;
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,6 +106,7 @@ class BudgetApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
         brightness: Brightness.dark,
+        platform: _isIOSMode ? TargetPlatform.iOS : null,
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color(0xFF2196F3),
           brightness: Brightness.dark,
@@ -90,13 +123,27 @@ class BudgetApp extends StatelessWidget {
         Locale('it', 'IT'),
         Locale('en', 'US'),
       ],
-      home: const BudgetHomeScreen(),
+      home: IosSimulatorFrame(
+        isSimulated: _isIOSMode,
+        onToggleMode: _toggleIOSMode,
+        child: BudgetHomeScreen(
+          isIOSMode: _isIOSMode,
+          onToggleIOSMode: _toggleIOSMode,
+        ),
+      ),
     );
   }
 }
 
 class BudgetHomeScreen extends StatefulWidget {
-  const BudgetHomeScreen({super.key});
+  final bool isIOSMode;
+  final VoidCallback? onToggleIOSMode;
+
+  const BudgetHomeScreen({
+    super.key,
+    this.isIOSMode = false,
+    this.onToggleIOSMode,
+  });
 
   @override
   State<BudgetHomeScreen> createState() => _BudgetHomeScreenState();
@@ -805,6 +852,9 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
                     tooltip: 'Menu',
                     onSelected: (value) {
                       switch (value) {
+                        case 'toggle_ios':
+                          widget.onToggleIOSMode?.call();
+                          break;
                         case 'backup':
                           _showBackupDialog();
                           break;
@@ -817,6 +867,17 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
                       }
                     },
                     itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                      PopupMenuItem<String>(
+                        value: 'toggle_ios',
+                        child: ListTile(
+                          leading: Icon(
+                            widget.isIOSMode ? Icons.desktop_windows : Icons.apple,
+                            color: Colors.cyanAccent,
+                          ),
+                          title: Text(widget.isIOSMode ? 'Modalità Desktop' : 'Simulatore iOS (iPhone)'),
+                          contentPadding: EdgeInsets.zero,
+                        ),
+                      ),
                       PopupMenuItem<String>(
                         value: 'backup',
                         child: ListTile(

@@ -11,20 +11,20 @@ dependencies:
     sdk: flutter
   cupertino_icons: ^1.0.2
   intl: ^0.20.2
-  google_fonts: ^6.3.3
+  google_fonts: ^8.0.2
   shared_preferences: ^2.2.0
-  flutter_local_notifications: ^19.5.0
-  timezone: ^0.10.1
+  flutter_local_notifications: ^21.0.0
+  timezone: ^0.11.0
   excel: ^4.0.3
   path_provider: ^2.1.0
   fl_chart: ^1.1.1
-  file_picker: ^10.3.7
+  file_picker: ^11.0.2
   google_mlkit_text_recognition: ^0.15.0
   image_picker: ^1.1.2
   flutter_localizations:
     sdk: flutter
   local_notifier: ^0.1.6
-  permission_handler: ^11.3.1
+  permission_handler: ^12.0.1
 
 dev_dependencies:
   flutter_test:
@@ -35,7 +35,7 @@ dev_dependencies:
 
 flutter_icons:
   android: true
-  ios: false
+  ios: true
   image_path: "assets/icon.png"
   min_sdk_android: 21
   adaptive_icon_background: "#2196F3"

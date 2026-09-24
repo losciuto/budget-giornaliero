@@ -40,6 +40,7 @@ Il codice sorgente si trova nella cartella `flutter_app/`.
 | Piattaforma | Stato | Note |
 |-------------|-------|------|
 | 🤖 Android | ✅ Completo | Tutte le funzionalità incluse notifiche |
+| 🍏 iOS | ✅ Completo | iPhone/iPad, notifiche, scansione OCR, export file |
 | 🐧 Linux | ✅ Completo | Desktop nativo con notifiche locali |
 | 🪟 Windows | ✅ Completo | Desktop nativo con notifiche locali |
 

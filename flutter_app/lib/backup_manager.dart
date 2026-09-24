@@ -77,7 +77,7 @@ class BackupManager {
         return file.path;
       } else {
         // Desktop: chiedi all'utente dove salvare
-        final result = await FilePicker.platform.saveFile(
+        final result = await FilePicker.saveFile(
           dialogTitle: AppStrings.get(context, 'save_backup_dialog'),
           fileName: fileName,
           type: FileType.custom,
@@ -99,7 +99,7 @@ class BackupManager {
   /// Carica un backup da file
   static Future<Map<String, dynamic>?> loadBackupFromFile(BuildContext context) async {
     try {
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
+      FilePickerResult? result = await FilePicker.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['json'],
         dialogTitle: AppStrings.get(context, 'select_backup_dialog'),
