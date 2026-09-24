@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Tag da rilasciare (es. v2.7.2)'
+        description: 'Tag da rilasciare (es. v2.7.3)'
         required: false
         default: ''
 
@@ -16,6 +16,10 @@ jobs:
   build-android-apk:
     runs-on: ubuntu-latest
     steps:
+      - name: Setup Node (avoid deprecation warning)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
       - uses: actions/checkout@v4
       - name: Install Flutter
         uses: subosito/flutter-action@v2
@@ -40,6 +44,10 @@ jobs:
   build-android-aab:
     runs-on: ubuntu-latest
     steps:
+      - name: Setup Node (avoid deprecation warning)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
       - uses: actions/checkout@v4
       - name: Install Flutter
         uses: subosito/flutter-action@v2
@@ -64,7 +72,15 @@ jobs:
   build-linux:
     runs-on: ubuntu-latest
     steps:
+      - name: Setup Node (avoid deprecation warning)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
       - uses: actions/checkout@v4
+      - name: Install build dependencies for Linux
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y clang libgtk-3-dev liblzma-dev liblz4-dev libbz2-dev libzstd-dev libpcre2-dev
       - name: Install Flutter
         uses: subosito/flutter-action@v2
         with:
@@ -88,7 +104,13 @@ jobs:
   build-windows:
     runs-on: windows-latest
     steps:
+      - name: Setup Node (avoid deprecation warning)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
       - uses: actions/checkout@v4
+      - name: Install 7zip (required for archiving)
+        run: choco install -y 7zip
       - name: Install Flutter
         uses: subosito/flutter-action@v2
         with:
@@ -116,6 +138,10 @@ jobs:
       APPLE_DEVELOPER_PASSWORD: ${{ secrets.APPLE_DEVELOPER_PASSWORD }}
       PROVISIONING_PROFILE: ${{ secrets.PROVISIONING_PROFILE }}
     steps:
+      - name: Setup Node (avoid deprecation warning)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
       - uses: actions/checkout@v4
       - name: Install Flutter
         uses: subosito/flutter-action@v2
@@ -130,11 +156,11 @@ jobs:
           security unlock-keychain -p action build.keychain
           security import cert.p12 -k build.keychain -P "$APPLE_DEVELOPER_PASSWORD" -T /usr/bin/codesign
           security set-key-partition-list -S apple-tool:,apple: -s -k action build.keychain
-      - name: Build iOS IPA
+      - name: Build iOS IPA (no codesign if no certs)
         run: |
           cd flutter_app
           flutter pub get
-          flutter build ipa --release
+          flutter build ipa --release $(if [ -z "$APPLE_DEVELOPER_CERTIFICATE" ]; then echo "--no-codesign"; fi)
       - name: Archive iOS artifact
         run: |
           cd flutter_app/build/ios/ipa
@@ -150,6 +176,10 @@ jobs:
     needs: [build-android-apk, build-android-aab, build-linux, build-windows, build-ios]
     runs-on: ubuntu-latest
     steps:
+      - name: Setup Node (avoid deprecation warning)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
       - name: Download all artifacts
         uses: actions/download-artifact@v4
         with:
