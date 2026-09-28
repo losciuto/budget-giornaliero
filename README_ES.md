@@ -58,5 +58,4 @@ Descarga e instala el archivo `.apk` desde la carpeta `build/app/outputs/flutter
 Este proyecto está bajo la Licencia MIT.
 
 ---
-**Autor**: [losciuto](https://github.com/losciuto/budget-giornaliero)  
-**Desarrollado con**: Antigravity (Gemini 3 Pro)
+**Autor**: [losciuto](https://github.com/losciuto/budget-giornaliero)

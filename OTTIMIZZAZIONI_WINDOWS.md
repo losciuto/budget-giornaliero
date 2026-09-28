@@ -282,5 +282,4 @@ Per problemi durante la compilazione su Windows, consulta:
 **Versione**: 2.1.0 (Flutter)  
 **Piattaforme**: Android, Linux, Windows  
 **Data ottimizzazione**: Dicembre 2025  
-**Autore**: Massimo Lo Sciuto  
-**Supporto**: Antigravity (Gemini 3 Pro)
+**Autore**: Massimo Lo Sciuto

@@ -112,8 +112,6 @@ To modify the app icon:
 
 **[losciuto](https://github.com/losciuto/budget-giornaliero)**
 
-Developed with support from Antigravity and Gemini 3 Pro
-
 ## 📄 Version
 
 **2.7.1** - Periodic Reports (January 2026)

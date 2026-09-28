@@ -113,8 +113,6 @@ Per modificare l'icona dell'app:
 
 **[losciuto](https://github.com/losciuto/budget-giornaliero)**
 
-Sviluppato con il supporto di Antigravity e Gemini 3 Pro
-
 ## 📄 Versione
 
 **2.7.1** - Resoconti Periodici (Gennaio 2026)

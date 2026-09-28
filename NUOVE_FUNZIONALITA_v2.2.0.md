@@ -311,7 +311,6 @@ Se vuoi ulteriori miglioramenti in futuro:
 
 **Versione**: 2.2.0  
 **Data**: 1 Dicembre 2025  
-**Autore**: Massimo Lo Sciuto  
-**Supporto**: Antigravity (Gemini 3 Pro)  
+**Autore**: Massimo Lo Sciuto
 
 **TUTTO COMPLETATO E FUNZIONANTE! 🎉**

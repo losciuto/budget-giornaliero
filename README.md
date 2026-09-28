@@ -82,5 +82,3 @@ Per dettagli sulla vecchia compilazione Android con Buildozer, vedi i file nella
 
 ## Crediti
 *   **Autore**: [losciuto](https://github.com/losciuto/budget-giornaliero)
-*   **Supporto**: Antigravity
-*   **Sviluppo**: Gemini 3 Pro

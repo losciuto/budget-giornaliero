@@ -226,8 +226,7 @@ build_windows.bat
 
 **Data Verifica**: 1 Dicembre 2025  
 **Versione**: 2.1.0 (Flutter)  
-**Autore**: Massimo Lo Sciuto  
-**Supporto**: Antigravity (Gemini 3 Pro)
+**Autore**: Massimo Lo Sciuto
 
 ---
 

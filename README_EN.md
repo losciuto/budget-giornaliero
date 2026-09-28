@@ -55,5 +55,3 @@ For details on the old Android build with Buildozer, see the files in the `nativ
 
 ## Credits
 *   **Author**: [losciuto](https://github.com/losciuto/budget-giornaliero)
-*   **Support**: Antigravity
-*   **Development**: Gemini 3 Pro

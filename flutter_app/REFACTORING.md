@@ -153,8 +153,6 @@ flutter build linux --debug
 
 ## 👨‍💻 Autore
 
-Refactoring eseguito con il supporto di **Antigravity AI** (Claude 4.5 Sonnet)
-
 ---
 
 **Versione**: 2.5.0  
