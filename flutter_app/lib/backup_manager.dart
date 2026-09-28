@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:path_provider/path_provider.dart';
@@ -32,7 +33,8 @@ class BackupManager {
   }
 
   /// Salva il backup su file
-  static Future<String?> saveBackupToFile(Map<String, dynamic> data, BuildContext context) async {
+  static Future<String?> saveBackupToFile(
+      Map<String, dynamic> data, BuildContext context) async {
     try {
       final jsonString = const JsonEncoder.withIndent('  ').convert(data);
       final timestamp = DateTime.now().millisecondsSinceEpoch;
@@ -70,14 +72,16 @@ class BackupManager {
           return file.path;
         }
       } else if (Platform.isIOS) {
-        // iOS: salva in Documents
-        final directory = await getApplicationDocumentsDirectory();
-        final file = File('${directory.path}/$fileName');
-        await file.writeAsString(jsonString);
-        return file.path;
+        return FilePicker.saveFile(
+          dialogTitle: AppStrings.get(context, 'save_backup_dialog'),
+          fileName: fileName,
+          type: FileType.custom,
+          allowedExtensions: ['json'],
+          bytes: Uint8List.fromList(utf8.encode(jsonString)),
+        );
       } else {
         // Desktop: chiedi all'utente dove salvare
-        final result = await FilePicker.platform.saveFile(
+        final result = await FilePicker.saveFile(
           dialogTitle: AppStrings.get(context, 'save_backup_dialog'),
           fileName: fileName,
           type: FileType.custom,
@@ -97,9 +101,10 @@ class BackupManager {
   }
 
   /// Carica un backup da file
-  static Future<Map<String, dynamic>?> loadBackupFromFile(BuildContext context) async {
+  static Future<Map<String, dynamic>?> loadBackupFromFile(
+      BuildContext context) async {
     try {
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
+      FilePickerResult? result = await FilePicker.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['json'],
         dialogTitle: AppStrings.get(context, 'select_backup_dialog'),
@@ -216,7 +221,8 @@ class BackupDialog extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.upload_file, color: Colors.blue),
             title: Text(AppStrings.getSimple('backup_export', languageCode)),
-            subtitle: Text(AppStrings.getSimple('backup_export_subtitle', languageCode)),
+            subtitle: Text(
+                AppStrings.getSimple('backup_export_subtitle', languageCode)),
             onTap: () {
               Navigator.pop(context);
               onExport();
@@ -226,7 +232,8 @@ class BackupDialog extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.download, color: Colors.green),
             title: Text(AppStrings.getSimple('backup_import', languageCode)),
-            subtitle: Text(AppStrings.getSimple('backup_import_subtitle', languageCode)),
+            subtitle: Text(
+                AppStrings.getSimple('backup_import_subtitle', languageCode)),
             onTap: () {
               Navigator.pop(context);
               onImport();

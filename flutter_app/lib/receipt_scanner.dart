@@ -55,7 +55,6 @@ class ReceiptScanner {
     final totalKeywords = ['totale', 'total', 'importo', 'amount', 'summe', 'somme'];
 
     double? bestAmount;
-    int bestAmountIndex = -1;
 
     // Strategy 1: Look for "Totale" keyword and finding number on same or next line
     for (int i = 0; i < lines.length; i++) {
@@ -77,7 +76,6 @@ class ReceiptScanner {
           // If we found a "Total" line with a number, this is a strong candidate.
           // We prefer the *last* occurrence of Total usually (grand total vs subtotal)
           bestAmount = amount;
-          bestAmountIndex = i;
         }
       }
     }

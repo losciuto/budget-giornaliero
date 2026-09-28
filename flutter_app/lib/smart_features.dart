@@ -12,13 +12,14 @@ class SmartFeatures {
     required String languageCode,
   }) {
     final suggestions = <SmartSuggestion>[];
-    
+
     if (expenses.isEmpty) return suggestions;
 
     // Calcola spesa media giornaliera
     final totalSpent = expenses.fold(0.0, (sum, e) => sum + e.amount);
     final daysWithExpenses = _getDaysWithExpenses(expenses);
-    final avgDailySpending = daysWithExpenses > 0 ? totalSpent / daysWithExpenses : 0;
+    final avgDailySpending =
+        daysWithExpenses > 0 ? totalSpent / daysWithExpenses : 0;
 
     // Suggerimento 1: Confronto spesa media vs budget giornaliero
     if (avgDailySpending > dailyBudget * 1.2) {
@@ -26,7 +27,10 @@ class SmartFeatures {
         type: SuggestionType.warning,
         title: AppStrings.getSimple('smart_warning_title', languageCode),
         message: AppStrings.getSimple('smart_warning_msg', languageCode)
-            .replaceAll('{percent}', ((avgDailySpending / dailyBudget - 1) * 100).toStringAsFixed(0)),
+            .replaceAll(
+                '{percent}',
+                ((avgDailySpending / dailyBudget - 1) * 100)
+                    .toStringAsFixed(0)),
         icon: Icons.warning_amber,
         color: Colors.orange,
       ));
@@ -35,7 +39,10 @@ class SmartFeatures {
         type: SuggestionType.success,
         title: AppStrings.getSimple('smart_success_title', languageCode),
         message: AppStrings.getSimple('smart_success_msg', languageCode)
-            .replaceAll('{percent}', ((1 - avgDailySpending / dailyBudget) * 100).toStringAsFixed(0)),
+            .replaceAll(
+                '{percent}',
+                ((1 - avgDailySpending / dailyBudget) * 100)
+                    .toStringAsFixed(0)),
         icon: Icons.trending_down,
         color: Colors.green,
       ));
@@ -44,10 +51,13 @@ class SmartFeatures {
     // Suggerimento 2: Categoria con più spese
     final categoryExpenses = _groupByCategory(expenses);
     if (categoryExpenses.isNotEmpty) {
-      final topCategory = categoryExpenses.entries.reduce((a, b) => a.value > b.value ? a : b);
-      final topCat = ExpenseCategory.findById(topCategory.key) ?? ExpenseCategory.defaultCategories.last;
-      final percentage = (topCategory.value / totalSpent * 100).toStringAsFixed(0);
-      
+      final topCategory =
+          categoryExpenses.entries.reduce((a, b) => a.value > b.value ? a : b);
+      final topCat = ExpenseCategory.findById(topCategory.key) ??
+          ExpenseCategory.defaultCategories.last;
+      final percentage =
+          (topCategory.value / totalSpent * 100).toStringAsFixed(0);
+
       suggestions.add(SmartSuggestion(
         type: SuggestionType.info,
         title: AppStrings.getSimple('smart_top_cat_title', languageCode),
@@ -68,7 +78,7 @@ class SmartFeatures {
           type: SuggestionType.warning,
           title: AppStrings.getSimple('smart_forecast_title', languageCode),
           message: AppStrings.getSimple('smart_forecast_msg', languageCode)
-              .replaceAll('{amount}', excess.toStringAsFixed(2) + '€'),
+              .replaceAll('{amount}', '${excess.toStringAsFixed(2)}€'),
           icon: Icons.trending_up,
           color: Colors.red,
         ));
@@ -92,7 +102,9 @@ class SmartFeatures {
   }
 
   static int _getDaysWithExpenses(List<Expense> expenses) {
-    final uniqueDays = expenses.map((e) => DateTime(e.date.year, e.date.month, e.date.day)).toSet();
+    final uniqueDays = expenses
+        .map((e) => DateTime(e.date.year, e.date.month, e.date.day))
+        .toSet();
     return uniqueDays.length;
   }
 
@@ -107,10 +119,10 @@ class SmartFeatures {
 
   static int _getRecentDaysWithoutExpenses(List<Expense> expenses) {
     if (expenses.isEmpty) return 0;
-    
+
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
-    
+
     int streak = 0;
     for (int i = 0; i < 30; i++) {
       final checkDate = today.subtract(Duration(days: i));
@@ -118,11 +130,11 @@ class SmartFeatures {
         final expenseDate = DateTime(e.date.year, e.date.month, e.date.day);
         return expenseDate.isAtSameMomentAs(checkDate);
       });
-      
+
       if (hasExpense) break;
       streak++;
     }
-    
+
     return streak;
   }
 }
@@ -177,7 +189,8 @@ class SmartSuggestionsWidget extends StatelessWidget {
               color: suggestion.color.withAlpha((0.1 * 255).toInt()),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
-                side: BorderSide(color: suggestion.color.withOpacity(0.3), width: 1),
+                side: BorderSide(
+                    color: suggestion.color.withValues(alpha: 0.3), width: 1),
               ),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
@@ -206,7 +219,8 @@ class SmartSuggestionsWidget extends StatelessWidget {
                           Expanded(
                             child: Text(
                               suggestion.message,
-                              style: const TextStyle(fontSize: 9.5, height: 1.1),
+                              style:
+                                  const TextStyle(fontSize: 9.5, height: 1.1),
                               maxLines: 3,
                               overflow: TextOverflow.ellipsis,
                             ),

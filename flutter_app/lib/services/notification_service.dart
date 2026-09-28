@@ -7,18 +7,33 @@ import 'storage_service.dart';
 
 /// Service for managing notifications across platforms
 class NotificationService {
-  final FlutterLocalNotificationsPlugin _mobilePlugin = FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin _mobilePlugin =
+      FlutterLocalNotificationsPlugin();
 
   /// Initialize notification system
   Future<void> initialize() async {
-    // Android & iOS initialization
-    if (Platform.isAndroid || Platform.isIOS) {
+    // Android initialization
+    if (Platform.isAndroid) {
       const AndroidInitializationSettings initializationSettingsAndroid =
           AndroidInitializationSettings('@mipmap/ic_launcher');
       const InitializationSettings initializationSettings =
           InitializationSettings(android: initializationSettingsAndroid);
       
-      await _mobilePlugin.initialize(initializationSettings);
+      await _mobilePlugin.initialize(settings: initializationSettings);
+    }
+
+    // iOS initialization
+    if (Platform.isIOS) {
+      const IOSInitializationSettings initializationSettingsIOS =
+          IOSInitializationSettings(
+        requestAlertPermission: true,
+        requestBadgePermission: true,
+        requestSoundPermission: true,
+      );
+      const InitializationSettings initializationSettings =
+          InitializationSettings(iOS: initializationSettingsIOS);
+
+      await _mobilePlugin.initialize(settings: initializationSettings);
     }
     // Desktop initialization is handled in main()
   }
@@ -37,17 +52,36 @@ class NotificationService {
     // Android: Schedule daily notification
     if (Platform.isAndroid) {
       await _mobilePlugin.zonedSchedule(
-        0,
-        title,
-        body,
-        _nextInstanceOf9AM(),
-        const NotificationDetails(
+        id: 0,
+        title: title,
+        body: body,
+        scheduledDate: _nextInstanceOf9AM(),
+        notificationDetails: const NotificationDetails(
           android: AndroidNotificationDetails(
             'daily_budget_channel',
             'Daily Budget Notifications',
             channelDescription: 'Daily reminder of available budget',
             importance: Importance.max,
             priority: Priority.high,
+          ),
+        ),
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        matchDateTimeComponents: DateTimeComponents.time,
+      );
+    }
+
+    // iOS: Schedule daily notification
+    if (Platform.isIOS) {
+      await _mobilePlugin.zonedSchedule(
+        id: 0,
+        title: title,
+        body: body,
+        scheduledDate: _nextInstanceOf9AM(),
+        notificationDetails: const NotificationDetails(
+          iOS: DarwinNotificationDetails(
+            presentAlert: true,
+            presentBadge: true,
+            presentSound: true,
           ),
         ),
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
@@ -85,7 +119,7 @@ class NotificationService {
 
   /// Cancel all scheduled notifications
   Future<void> cancelAll() async {
-    if (Platform.isAndroid) {
+    if (Platform.isAndroid || Platform.isIOS) {
       await _mobilePlugin.cancelAll();
     }
   }
@@ -93,7 +127,8 @@ class NotificationService {
   /// Get next instance of 9 AM
   tz.TZDateTime _nextInstanceOf9AM() {
     final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
-    tz.TZDateTime scheduledDate = tz.TZDateTime(tz.local, now.year, now.month, now.day, 9);
+    tz.TZDateTime scheduledDate =
+        tz.TZDateTime(tz.local, now.year, now.month, now.day, 9);
     if (scheduledDate.isBefore(now)) {
       scheduledDate = scheduledDate.add(const Duration(days: 1));
     }

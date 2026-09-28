@@ -21,9 +21,8 @@ void main() {
     // Build our app and trigger a frame.
     await tester.pumpWidget(const BudgetApp());
 
-    // Verify that our title is present.
-    // Default test locale is usually US, so we expect English title
-    expect(find.text('Daily Budget'), findsOneWidget);
+    // Verify that our title is present (Italian is default)
+    expect(find.text('Budget Giornaliero'), findsOneWidget);
     
     // Verify that we have the amount input field
     expect(find.byType(TextField), findsOneWidget);

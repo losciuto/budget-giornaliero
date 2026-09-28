@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:excel/excel.dart';
 import 'package:intl/intl.dart';
@@ -66,26 +67,36 @@ class ExcelService {
       
       final remaining = totalBudget - totalSpent;
       
-      sheet.appendRow([TextCellValue('Budget Totale'), DoubleCellValue(totalBudget)]);
+      sheet.appendRow(
+          [TextCellValue('Budget Totale'), DoubleCellValue(totalBudget)]);
       sheet.cell(CellIndex.indexByString('A2')).cellStyle = labelStyle;
       sheet.cell(CellIndex.indexByString('B2')).cellStyle = currencyStyle;
       
-      sheet.appendRow([TextCellValue('Totale Speso'), DoubleCellValue(totalSpent)]);
+      sheet.appendRow(
+          [TextCellValue('Totale Speso'), DoubleCellValue(totalSpent)]);
       sheet.cell(CellIndex.indexByString('A3')).cellStyle = labelStyle;
       sheet.cell(CellIndex.indexByString('B3')).cellStyle = negativeStyle;
       
       sheet.appendRow([TextCellValue('Rimanente'), DoubleCellValue(remaining)]);
       sheet.cell(CellIndex.indexByString('A4')).cellStyle = labelStyle;
-      sheet.cell(CellIndex.indexByString('B4')).cellStyle = remaining >= 0 ? positiveStyle : negativeStyle;
+      sheet.cell(CellIndex.indexByString('B4')).cellStyle =
+          remaining >= 0 ? positiveStyle : negativeStyle;
       
-      sheet.appendRow([TextCellValue('Budget Giornaliero'), DoubleCellValue(calculatedDaily)]);
+      sheet.appendRow([
+        TextCellValue('Budget Giornaliero'),
+        DoubleCellValue(calculatedDaily)
+      ]);
       sheet.cell(CellIndex.indexByString('A5')).cellStyle = labelStyle;
       sheet.cell(CellIndex.indexByString('B5')).cellStyle = currencyStyle;
       
-      sheet.appendRow([TextCellValue('Giorni Mancanti'), TextCellValue(daysRemaining)]);
+      sheet.appendRow(
+          [TextCellValue('Giorni Mancanti'), TextCellValue(daysRemaining)]);
       sheet.cell(CellIndex.indexByString('A6')).cellStyle = labelStyle;
       
-      sheet.appendRow([TextCellValue('Data Target'), TextCellValue(dateFormat.format(targetDate))]);
+      sheet.appendRow([
+        TextCellValue('Data Target'),
+        TextCellValue(dateFormat.format(targetDate))
+      ]);
       sheet.cell(CellIndex.indexByString('A7')).cellStyle = labelStyle;
       
       sheet.appendRow([]);
@@ -96,13 +107,21 @@ class ExcelService {
       sheet.cell(CellIndex.indexByString('A9')).cellStyle = headerStyle;
       sheet.setRowHeight(8, 25);
       
-      sheet.appendRow([TextCellValue('Data'), TextCellValue('Descrizione'), TextCellValue('Importo'), TextCellValue('Rimanente')]);
+      sheet.appendRow([
+        TextCellValue('Data'),
+        TextCellValue('Descrizione'),
+        TextCellValue('Importo'),
+        TextCellValue('Rimanente')
+      ]);
       for (int col = 0; col < 4; col++) {
-        sheet.cell(CellIndex.indexByColumnRow(columnIndex: col, rowIndex: 9)).cellStyle = expenseHeaderStyle;
+        sheet
+            .cell(CellIndex.indexByColumnRow(columnIndex: col, rowIndex: 9))
+            .cellStyle = expenseHeaderStyle;
       }
       
       // Sort expenses chronologically for the report (Oldest -> Newest)
-      final sortedExpenses = List<Expense>.from(expenses)..sort((a, b) => a.date.compareTo(b.date));
+      final sortedExpenses = List<Expense>.from(expenses)
+        ..sort((a, b) => a.date.compareTo(b.date));
 
       double runningBalance = totalBudget;
       int rowIndex = 10;
@@ -116,9 +135,14 @@ class ExcelService {
         ]);
         
         // Apply styles
-        sheet.cell(CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: rowIndex)).cellStyle = negativeStyle;
-        sheet.cell(CellIndex.indexByColumnRow(columnIndex: 3, rowIndex: rowIndex)).cellStyle = 
-            runningBalance >= 0 ? positiveStyle : negativeStyle;
+        sheet
+            .cell(
+                CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: rowIndex))
+            .cellStyle = negativeStyle;
+        sheet
+            .cell(
+                CellIndex.indexByColumnRow(columnIndex: 3, rowIndex: rowIndex))
+            .cellStyle = runningBalance >= 0 ? positiveStyle : negativeStyle;
         rowIndex++;
       }
 
@@ -128,10 +152,13 @@ class ExcelService {
       sheet.setColumnWidth(2, 12);  // Importo
       sheet.setColumnWidth(3, 12);  // Rimanente
 
-      // Save file
-      String filePath;
+      // Salva file
       final timestamp = DateTime.now().millisecondsSinceEpoch;
       final fileName = 'budget_$timestamp.xlsx';
+      final fileBytes = excel.save();
+      if (fileBytes == null) {
+        return null;
+      }
 
       if (Platform.isAndroid) {
         try {
@@ -139,57 +166,47 @@ class ExcelService {
           if (!await directory.exists()) {
             await directory.create(recursive: true);
           }
-          filePath = '${directory.path}/$fileName';
-          
-          final fileBytes = excel.save();
-          if (fileBytes != null) {
-            final file = File(filePath);
+          final filePath = '${directory.path}/$fileName';
             
-            // Prova a scrivere direttamente (Android 13+)
             try {
-              await file.writeAsBytes(fileBytes);
+            await File(filePath).writeAsBytes(fileBytes);
               return filePath;
             } catch (e) {
-              // Chiedi i permessi e riprova (Android < 13)
-              var status = await Permission.storage.request();
+            final status = await Permission.storage.request();
               if (status.isGranted) {
-                await file.writeAsBytes(fileBytes);
-                return filePath;
-              } else {
-                // Fallback su Documents se i permessi sono negati
-                final docDir = await getApplicationDocumentsDirectory();
-                filePath = '${docDir.path}/$fileName';
-                final docFile = File(filePath);
-                await docFile.writeAsBytes(fileBytes);
+              await File(filePath).writeAsBytes(fileBytes);
                 return filePath;
               }
-            }
+
+            final docDir = await getApplicationDocumentsDirectory();
+            final docPath = '${docDir.path}/$fileName';
+            await File(docPath).writeAsBytes(fileBytes);
+            return docPath;
           }
         } catch (e) {
-          debugPrint('Errore accesso Download Excel, fallback su Documents: $e');
+          debugPrint(
+              'Errore accesso Download Excel, fallback su Documents: $e');
           final directory = await getApplicationDocumentsDirectory();
-          filePath = '${directory.path}/$fileName';
-          final fileBytes = excel.save();
-          if (fileBytes != null) {
-            final file = File(filePath);
-            await file.writeAsBytes(fileBytes);
+          final filePath = '${directory.path}/$fileName';
+          await File(filePath).writeAsBytes(fileBytes);
             return filePath;
           }
         }
-      } else {
-        final directory = await getApplicationDocumentsDirectory();
-        filePath = '${directory.path}/$fileName';
-      }
 
-      final fileBytes = excel.save();
-      
-      if (fileBytes != null) {
-        final file = File(filePath);
-        await file.writeAsBytes(fileBytes);
-        return filePath;
+      if (Platform.isIOS) {
+        return FilePicker.saveFile(
+          dialogTitle: 'Salva file Excel',
+          fileName: fileName,
+          type: FileType.custom,
+          allowedExtensions: ['xlsx'],
+          bytes: Uint8List.fromList(fileBytes),
+        );
       }
       
-      return null;
+      final directory = await getApplicationDocumentsDirectory();
+      final filePath = '${directory.path}/$fileName';
+      await File(filePath).writeAsBytes(fileBytes);
+      return filePath;
     } catch (e) {
       return null;
     }

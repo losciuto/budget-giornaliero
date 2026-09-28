@@ -198,7 +198,7 @@ Dark Theme              ✅      ✅      ✅
 
 ---
 
-**Version**: 2.7.0 (Flutter)  
+**Version**: 2.7.1 (Flutter)  
 **Platforms**: Android, Linux, Windows  
 **Author**: Massimo Lo Sciuto  
 **Date**: December 2025

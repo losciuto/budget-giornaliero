@@ -36,7 +36,9 @@ class _SearchFilterScreenState extends State<SearchFilterScreen> {
       _filteredExpenses = widget.expenses.where((expense) {
         // Filtro per ricerca testuale
         bool matchesSearch = _searchQuery.isEmpty ||
-            expense.description.toLowerCase().contains(_searchQuery.toLowerCase());
+            expense.description
+                .toLowerCase()
+                .contains(_searchQuery.toLowerCase());
 
         // Filtro per categoria
         bool matchesCategory = _selectedCategoryFilter == null ||
@@ -44,8 +46,10 @@ class _SearchFilterScreenState extends State<SearchFilterScreen> {
 
         // Filtro per data
         bool matchesDate = _dateRange == null ||
-            (expense.date.isAfter(_dateRange!.start.subtract(const Duration(days: 1))) &&
-                expense.date.isBefore(_dateRange!.end.add(const Duration(days: 1))));
+            (expense.date.isAfter(
+                    _dateRange!.start.subtract(const Duration(days: 1))) &&
+                expense.date
+                    .isBefore(_dateRange!.end.add(const Duration(days: 1))));
 
         return matchesSearch && matchesCategory && matchesDate;
       }).toList();
@@ -90,17 +94,22 @@ class _SearchFilterScreenState extends State<SearchFilterScreen> {
   @override
   Widget build(BuildContext context) {
     final dateFormat = DateFormat('dd/MM/yyyy', widget.languageCode);
-    final totalFiltered = _filteredExpenses.fold(0.0, (sum, e) => sum + e.amount);
+    final totalFiltered =
+        _filteredExpenses.fold(0.0, (sum, e) => sum + e.amount);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppStrings.get(context, 'search_title', languageCode: widget.languageCode)),
+        title: Text(AppStrings.get(context, 'search_title',
+            languageCode: widget.languageCode)),
         backgroundColor: const Color(0xFF2196F3),
         actions: [
-          if (_searchQuery.isNotEmpty || _selectedCategoryFilter != null || _dateRange != null)
+          if (_searchQuery.isNotEmpty ||
+              _selectedCategoryFilter != null ||
+              _dateRange != null)
             IconButton(
               icon: const Icon(Icons.clear_all),
-              tooltip: AppStrings.get(context, 'clear_filters_tooltip', languageCode: widget.languageCode),
+              tooltip: AppStrings.get(context, 'clear_filters_tooltip',
+                  languageCode: widget.languageCode),
               onPressed: _clearFilters,
             ),
         ],
@@ -116,7 +125,8 @@ class _SearchFilterScreenState extends State<SearchFilterScreen> {
                 // Campo di ricerca
                 TextField(
                   decoration: InputDecoration(
-                    hintText: AppStrings.get(context, 'search_hint', languageCode: widget.languageCode),
+                    hintText: AppStrings.get(context, 'search_hint',
+                        languageCode: widget.languageCode),
                     prefixIcon: const Icon(Icons.search),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -139,20 +149,23 @@ class _SearchFilterScreenState extends State<SearchFilterScreen> {
                     // Filtro categoria
                     Expanded(
                       child: DropdownButtonFormField<String>(
-                        value: _selectedCategoryFilter,
+                        initialValue: _selectedCategoryFilter,
                         decoration: InputDecoration(
-                          labelText: AppStrings.get(context, 'category', languageCode: widget.languageCode),
+                          labelText: AppStrings.get(context, 'category',
+                              languageCode: widget.languageCode),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
                           filled: true,
                           fillColor: Colors.white,
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 8),
                         ),
                         items: [
                           DropdownMenuItem<String>(
                             value: null,
-                            child: Text(AppStrings.get(context, 'category_all', languageCode: widget.languageCode)),
+                            child: Text(AppStrings.get(context, 'category_all',
+                                languageCode: widget.languageCode)),
                           ),
                           ...ExpenseCategory.defaultCategories.map((cat) {
                             return DropdownMenuItem<String>(
@@ -184,12 +197,14 @@ class _SearchFilterScreenState extends State<SearchFilterScreen> {
                         icon: const Icon(Icons.date_range),
                         label: Text(
                           _dateRange == null
-                              ? AppStrings.get(context, 'period_button', languageCode: widget.languageCode)
+                              ? AppStrings.get(context, 'period_button',
+                                  languageCode: widget.languageCode)
                               : '${dateFormat.format(_dateRange!.start)} - ${dateFormat.format(_dateRange!.end)}',
                           style: const TextStyle(fontSize: 12),
                         ),
                         style: OutlinedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 16),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -210,13 +225,17 @@ class _SearchFilterScreenState extends State<SearchFilterScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  AppStrings.get(context, 'expenses_found', languageCode: widget.languageCode)
-                      .replaceAll('{count}', _filteredExpenses.length.toString()),
+                  AppStrings.get(context, 'expenses_found',
+                          languageCode: widget.languageCode)
+                      .replaceAll(
+                          '{count}', _filteredExpenses.length.toString()),
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  AppStrings.get(context, 'total_label', languageCode: widget.languageCode)
-                      .replaceAll('{amount}', widget.currencyFormat.format(totalFiltered)),
+                  AppStrings.get(context, 'total_label',
+                          languageCode: widget.languageCode)
+                      .replaceAll('{amount}',
+                          widget.currencyFormat.format(totalFiltered)),
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     color: Colors.redAccent,
@@ -233,11 +252,14 @@ class _SearchFilterScreenState extends State<SearchFilterScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.search_off, size: 80, color: Colors.grey[400]),
+                        Icon(Icons.search_off,
+                            size: 80, color: Colors.grey[400]),
                         const SizedBox(height: 16),
                         Text(
-                          AppStrings.get(context, 'no_results', languageCode: widget.languageCode),
-                          style: TextStyle(fontSize: 18, color: Colors.grey[600]),
+                          AppStrings.get(context, 'no_results',
+                              languageCode: widget.languageCode),
+                          style:
+                              TextStyle(fontSize: 18, color: Colors.grey[600]),
                         ),
                       ],
                     ),
@@ -251,7 +273,8 @@ class _SearchFilterScreenState extends State<SearchFilterScreen> {
                         margin: const EdgeInsets.only(bottom: 8),
                         child: ListTile(
                           leading: CircleAvatar(
-                            backgroundColor: expense.category.color.withOpacity(0.2),
+                            backgroundColor:
+                                expense.category.color.withValues(alpha: 0.2),
                             child: Icon(
                               expense.category.icon,
                               color: expense.category.color,

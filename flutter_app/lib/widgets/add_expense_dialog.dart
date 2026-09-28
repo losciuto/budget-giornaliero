@@ -42,12 +42,14 @@ class _AddExpenseDialogState extends State<AddExpenseDialog> {
           children: [
             ListTile(
               leading: const Icon(Icons.camera_alt),
-              title: Text(AppStrings.get(context, 'camera', languageCode: widget.languageCode)),
+              title: Text(AppStrings.get(context, 'camera',
+                  languageCode: widget.languageCode)),
               onTap: () => Navigator.pop(context, ImageSource.camera),
             ),
             ListTile(
               leading: const Icon(Icons.photo_library),
-              title: Text(AppStrings.get(context, 'gallery', languageCode: widget.languageCode)),
+              title: Text(AppStrings.get(context, 'gallery',
+                  languageCode: widget.languageCode)),
               onTap: () => Navigator.pop(context, ImageSource.gallery),
             ),
           ],
@@ -57,27 +59,29 @@ class _AddExpenseDialogState extends State<AddExpenseDialog> {
 
     if (source != null) {
       if (!mounted) return;
-      
+
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('${AppStrings.get(context, 'scan_tooltip', languageCode: widget.languageCode)}...'), 
-        duration: const Duration(seconds: 1)
-      ));
-      
+          content: Text(
+              '${AppStrings.get(context, 'scan_tooltip', languageCode: widget.languageCode)}...'),
+          duration: const Duration(seconds: 1)));
+
       final amount = await ReceiptScanner.scanReceipt(source);
-      
+
       if (!mounted) return;
       if (amount != null) {
         String formatted = amount.toStringAsFixed(2);
         _amountController.text = formatted;
-        
+
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(AppStrings.get(context, 'amount_found', languageCode: widget.languageCode)
+          content: Text(AppStrings.get(context, 'amount_found',
+                  languageCode: widget.languageCode)
               .replaceAll('{amount}', formatted)),
           backgroundColor: Colors.green,
         ));
       } else {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(AppStrings.get(context, 'no_amount_found', languageCode: widget.languageCode)),
+          content: Text(AppStrings.get(context, 'no_amount_found',
+              languageCode: widget.languageCode)),
           backgroundColor: Colors.orange,
         ));
       }
@@ -89,7 +93,8 @@ class _AddExpenseDialogState extends State<AddExpenseDialog> {
     if (amount != null && amount > 0) {
       final expense = Expense(
         amount: amount,
-        description: _descController.text.isEmpty ? 'Spesa' : _descController.text,
+        description:
+            _descController.text.isEmpty ? 'Spesa' : _descController.text,
         date: DateTime.now(),
         categoryId: _selectedCategoryId,
       );
@@ -101,14 +106,16 @@ class _AddExpenseDialogState extends State<AddExpenseDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(AppStrings.get(context, 'add_expense', languageCode: widget.languageCode)),
+      title: Text(AppStrings.get(context, 'add_expense',
+          languageCode: widget.languageCode)),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           TextField(
             controller: _descController,
             decoration: InputDecoration(
-              labelText: AppStrings.get(context, 'description', languageCode: widget.languageCode),
+              labelText: AppStrings.get(context, 'description',
+                  languageCode: widget.languageCode),
             ),
             textCapitalization: TextCapitalization.sentences,
           ),
@@ -116,11 +123,13 @@ class _AddExpenseDialogState extends State<AddExpenseDialog> {
           TextField(
             controller: _amountController,
             decoration: InputDecoration(
-              labelText: AppStrings.get(context, 'amount', languageCode: widget.languageCode),
+              labelText: AppStrings.get(context, 'amount',
+                  languageCode: widget.languageCode),
               suffixIcon: (Platform.isAndroid || Platform.isIOS)
                   ? IconButton(
                       icon: const Icon(Icons.camera_alt),
-                      tooltip: AppStrings.get(context, 'scan_tooltip', languageCode: widget.languageCode),
+                      tooltip: AppStrings.get(context, 'scan_tooltip',
+                          languageCode: widget.languageCode),
                       onPressed: _handleReceiptScan,
                     )
                   : null,
@@ -129,9 +138,10 @@ class _AddExpenseDialogState extends State<AddExpenseDialog> {
           ),
           const SizedBox(height: 16),
           DropdownButtonFormField<String>(
-            value: _selectedCategoryId,
+            initialValue: _selectedCategoryId,
             decoration: InputDecoration(
-              labelText: AppStrings.get(context, 'category', languageCode: widget.languageCode),
+              labelText: AppStrings.get(context, 'category',
+                  languageCode: widget.languageCode),
               border: const OutlineInputBorder(),
             ),
             items: ExpenseCategory.defaultCategories.map((category) {
@@ -159,11 +169,13 @@ class _AddExpenseDialogState extends State<AddExpenseDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: Text(AppStrings.get(context, 'cancel', languageCode: widget.languageCode)),
+          child: Text(AppStrings.get(context, 'cancel',
+              languageCode: widget.languageCode)),
         ),
         ElevatedButton(
           onPressed: _addExpense,
-          child: Text(AppStrings.get(context, 'add', languageCode: widget.languageCode)),
+          child: Text(AppStrings.get(context, 'add',
+              languageCode: widget.languageCode)),
         ),
       ],
     );

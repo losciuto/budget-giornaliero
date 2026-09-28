@@ -319,7 +319,7 @@ class _PeriodicReportsScreenState extends State<PeriodicReportsScreen> with Sing
         final category = expense.category;
         return ListTile(
           leading: CircleAvatar(
-            backgroundColor: category.color.withOpacity(0.2),
+            backgroundColor: category.color.withValues(alpha: 0.2),
             child: Icon(category.icon, color: category.color),
           ),
           title: Text(expense.description),
