@@ -763,8 +763,6 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
                     const Divider(),
                   Text(
                     "${AppStrings.get(context, 'author', languageCode: _selectedLanguage)}: Massimo Lo Sciuto\n"
-                    "${AppStrings.get(context, 'support', languageCode: _selectedLanguage)}: Antigravity\n"
-                    "${AppStrings.get(context, 'development', languageCode: _selectedLanguage)}: Gemini 3 Pro\n"
                     "${AppStrings.get(context, 'version', languageCode: _selectedLanguage)}: 2.7.2 (Flutter)",
                   ),
                   const SizedBox(height: 12),
