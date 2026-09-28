@@ -7,31 +7,25 @@ import 'storage_service.dart';
 
 /// Service for managing notifications across platforms
 class NotificationService {
-  final FlutterLocalNotificationsPlugin _mobilePlugin =
-      FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin _mobilePlugin = FlutterLocalNotificationsPlugin();
 
   /// Initialize notification system
   Future<void> initialize() async {
-    // Android initialization
-    if (Platform.isAndroid) {
+    // Android & iOS initialization
+    if (Platform.isAndroid || Platform.isIOS) {
       const AndroidInitializationSettings initializationSettingsAndroid =
           AndroidInitializationSettings('@mipmap/ic_launcher');
-      const InitializationSettings initializationSettings =
-          InitializationSettings(android: initializationSettingsAndroid);
-      
-      await _mobilePlugin.initialize(settings: initializationSettings);
-    }
-
-    // iOS initialization
-    if (Platform.isIOS) {
-      const IOSInitializationSettings initializationSettingsIOS =
-          IOSInitializationSettings(
+      const DarwinInitializationSettings initializationSettingsDarwin =
+          DarwinInitializationSettings(
         requestAlertPermission: true,
         requestBadgePermission: true,
         requestSoundPermission: true,
       );
       const InitializationSettings initializationSettings =
-          InitializationSettings(iOS: initializationSettingsIOS);
+          InitializationSettings(
+        android: initializationSettingsAndroid,
+        iOS: initializationSettingsDarwin,
+      );
 
       await _mobilePlugin.initialize(settings: initializationSettings);
     }
@@ -49,8 +43,8 @@ class NotificationService {
       return;
     }
 
-    // Android: Schedule daily notification
-    if (Platform.isAndroid) {
+    // Android & iOS: Schedule daily notification
+    if (Platform.isAndroid || Platform.isIOS) {
       await _mobilePlugin.zonedSchedule(
         id: 0,
         title: title,
@@ -64,20 +58,6 @@ class NotificationService {
             importance: Importance.max,
             priority: Priority.high,
           ),
-        ),
-        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-        matchDateTimeComponents: DateTimeComponents.time,
-      );
-    }
-
-    // iOS: Schedule daily notification
-    if (Platform.isIOS) {
-      await _mobilePlugin.zonedSchedule(
-        id: 0,
-        title: title,
-        body: body,
-        scheduledDate: _nextInstanceOf9AM(),
-        notificationDetails: const NotificationDetails(
           iOS: DarwinNotificationDetails(
             presentAlert: true,
             presentBadge: true,
@@ -109,9 +89,9 @@ class NotificationService {
         title: title,
         body: body,
       );
-      
+
       await notification.show();
-      
+
       // Save today as last shown
       await StorageService.setLastNotificationDate(todayStr);
     }
@@ -127,8 +107,7 @@ class NotificationService {
   /// Get next instance of 9 AM
   tz.TZDateTime _nextInstanceOf9AM() {
     final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
-    tz.TZDateTime scheduledDate =
-        tz.TZDateTime(tz.local, now.year, now.month, now.day, 9);
+    tz.TZDateTime scheduledDate = tz.TZDateTime(tz.local, now.year, now.month, now.day, 9);
     if (scheduledDate.isBefore(now)) {
       scheduledDate = scheduledDate.add(const Duration(days: 1));
     }

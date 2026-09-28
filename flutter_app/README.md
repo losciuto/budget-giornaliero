@@ -11,14 +11,14 @@ Applicazione moderna per la gestione del budget giornaliero, sviluppata interame
 - **Saldo Progressivo**: Visualizza il saldo rimanente dopo ogni spesa
 - **Multilingua**: Supporto per 5 lingue (Italiano, Inglese, Spagnolo, Francese, Tedesco)
 - **Multi-valuta**: Supporto per 20+ valute (EUR, USD, GBP, JPY, CHF, CAD, AUD, CNY, INR, BRL, RUB, KRW, MXN, ZAR, SEK, NOK, DKK, PLN, TRY, AED)
-- **Notifiche Giornaliere**: Promemoria giornalieri del budget disponibile (Android, Windows, Linux)
+- **Notifiche Giornaliere**: Promemoria giornalieri del budget disponibile (Android, iOS, Windows, Linux)
 - **Ricerca e Filtri**: Ricerca avanzata per descrizione, categoria e data
 - **Statistiche**: Grafici a torta e a barre per analizzare le spese
 - **Backup e Ripristino**: Salvataggio e caricamento dati in formato JSON
 - **Suggerimenti Smart**: Analisi intelligente delle spese con consigli personalizzati
 - **Esportazione Excel**: Esporta il riepilogo budget e le spese in formato Excel con formattazione professionale
 - **Cancellazione Rapida**: Elimina tutte le spese con un solo tap
-- **Cross-platform**: Disponibile per Android, Linux Desktop e Windows
+- **Cross-platform**: Disponibile per Android, iOS, Linux Desktop e Windows
 
 ## 🏗️ Struttura del Progetto
 
@@ -40,6 +40,7 @@ L'applicazione segue un'architettura a layer con separazione delle responsabilit
 - `lib/app_strings.dart`: Stringhe localizzate
 - `test/`: Unit test e Widget test
 - `android/`: Progetto nativo Android
+- `ios/`: Progetto nativo iOS (iPhone & iPad)
 - `linux/`: Configurazione build Linux
 - `windows/`: Configurazione build Windows
 - `assets/`: Risorse (icone)

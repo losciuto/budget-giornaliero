@@ -70,5 +70,9 @@
 	<string>Serve per scansionare scontrini e rilevare importi automaticamente</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Serve per selezionare foto di scontrini dalla galleria</string>
+	<key>UIFileSharingEnabled</key>
+	<true/>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
 </dict>
 </plist>

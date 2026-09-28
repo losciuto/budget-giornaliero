@@ -47,7 +47,21 @@ static void my_application_activate(GApplication* application) {
     gtk_window_set_title(window, "Budget Giornaliero");
   }
 
-  gtk_window_set_default_size(window, 1280, 720);
+  gboolean is_ios_mode = FALSE;
+  if (self->dart_entrypoint_arguments != nullptr) {
+    for (gchar** arg = self->dart_entrypoint_arguments; *arg != nullptr; ++arg) {
+      if (g_strcmp0(*arg, "--ios") == 0 || g_strcmp0(*arg, "--mobile") == 0) {
+        is_ios_mode = TRUE;
+        break;
+      }
+    }
+  }
+
+  if (is_ios_mode) {
+    gtk_window_set_default_size(window, 440, 920);
+  } else {
+    gtk_window_set_default_size(window, 1280, 720);
+  }
   gtk_widget_show(GTK_WIDGET(window));
 
   g_autoptr(FlDartProject) project = fl_dart_project_new();
